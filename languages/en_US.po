@@ -1,0 +1,474 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: mycitycard v1.0.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: 2015-04-07 07:00:26+0000\n"
+"Last-Translator: mycitycasu <support@leomdia.co.il>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: CSL v1.x\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED STATES\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-Bookmarks: \n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Textdomain-Support: yes"
+
+#: 404.php:15
+#@ mycitycard
+msgid "Oops! That page can&rsquo;t be found."
+msgstr ""
+
+#: 404.php:19
+#@ mycitycard
+msgid "It looks like nothing was found at this location. Maybe try one of the links below or a search?"
+msgstr ""
+
+#: 404.php:27
+#@ mycitycard
+msgid "Most Used Categories"
+msgstr ""
+
+#. translators: %1$s: smiley
+#: 404.php:44
+#, php-format
+#@ mycitycard
+msgid "Try looking in the monthly archives. %1$s"
+msgstr ""
+
+#: comments.php:28
+#, php-format
+#@ mycitycard
+msgctxt "comments title"
+msgid "One thought on &ldquo;%2$s&rdquo;"
+msgid_plural "%1$s thoughts on &ldquo;%2$s&rdquo;"
+msgstr[0] ""
+msgstr[1] ""
+
+#: comments.php:35
+#: comments.php:56
+#@ mycitycard
+msgid "Comment navigation"
+msgstr ""
+
+#: comments.php:38
+#: comments.php:59
+#@ mycitycard
+msgid "Older Comments"
+msgstr ""
+
+#: comments.php:39
+#: comments.php:60
+#@ mycitycard
+msgid "Newer Comments"
+msgstr ""
+
+#: comments.php:72
+#@ mycitycard
+msgid "Comments are closed."
+msgstr ""
+
+#: content-none.php:13
+#@ mycitycard
+msgid "Nothing Found"
+msgstr ""
+
+#: content-none.php:19
+#, php-format
+#@ mycitycard
+msgid "Ready to publish your first post? <a href=\"%1$s\">Get started here</a>."
+msgstr ""
+
+#: content-none.php:23
+#@ mycitycard
+msgid "Sorry, but nothing matched your search terms. Please try again with some different keywords."
+msgstr ""
+
+#: content-none.php:28
+#@ mycitycard
+msgid "It seems we can&rsquo;t find what you&rsquo;re looking for. Perhaps searching can help."
+msgstr ""
+
+#: content-page.php:18
+#: content-single.php:20
+#: content.php:29
+#@ mycitycard
+msgid "Pages:"
+msgstr ""
+
+#: content-page.php:25
+#: inc/template-tags.php:126
+#@ mycitycard
+msgid "Edit"
+msgstr ""
+
+#. translators: %s: Name of current post
+#: content.php:22
+#, php-format
+#@ mycitycard
+msgid "Continue reading %s <span class=\"meta-nav\">&rarr;</span>"
+msgstr ""
+
+#: footer.php:15
+#@ mycitycard
+msgid "http://wordpress.org/"
+msgstr ""
+
+#: footer.php:15
+#, php-format
+#@ mycitycard
+msgid "Proudly powered by %s"
+msgstr ""
+
+#: footer.php:17
+#, php-format
+#@ mycitycard
+msgid "Theme: %1$s by %2$s."
+msgstr ""
+
+#: functions.php:55
+#: header.php:38
+#@ mycitycard
+msgid "Primary Menu"
+msgstr ""
+
+#: functions.php:90
+#@ mycitycard
+msgid "Sidebar"
+msgstr ""
+
+#: functions.php:100
+#@ mycitycard
+msgid "HeaderSearchWidgets"
+msgstr ""
+
+#: functions.php:110
+#@ mycitycard
+msgid "HeaderCityWidgets"
+msgstr ""
+
+#: functions.php:120
+#@ mycitycard
+msgid "SidemenuWidgets"
+msgstr ""
+
+#: functions.php:130
+#@ mycitycard
+msgid "AdsWidgets"
+msgstr ""
+
+#: functions.php:192
+#@ default
+msgid "Discounts"
+msgstr ""
+
+#: functions.php:193
+#@ default
+msgid "Discount"
+msgstr ""
+
+#: functions.php:212
+#@ default
+msgctxt "taxonomy general name"
+msgid "Locations"
+msgstr ""
+
+#: functions.php:213
+#@ default
+msgctxt "taxonomy singular name"
+msgid "Location"
+msgstr ""
+
+#: functions.php:214
+#@ default
+msgid "Search Locations"
+msgstr ""
+
+#: functions.php:215
+#@ default
+msgid "All Locations"
+msgstr ""
+
+#: functions.php:216
+#@ default
+msgid "Parent Location"
+msgstr ""
+
+#: functions.php:217
+#@ default
+msgid "Parent Location:"
+msgstr ""
+
+#: functions.php:218
+#@ default
+msgid "Edit Location"
+msgstr ""
+
+#: functions.php:219
+#@ default
+msgid "Update Location"
+msgstr ""
+
+#: functions.php:220
+#@ default
+msgid "Add New Location"
+msgstr ""
+
+#: functions.php:221
+#@ default
+msgid "New Location Name"
+msgstr ""
+
+#: functions.php:222
+#@ default
+msgid "Locations"
+msgstr ""
+
+#: header.php:32
+#@ mycitycard
+msgid "Coupons & Benefits in Your City"
+msgstr ""
+
+#: inc/extras.php:52
+#, php-format
+#@ mycitycard
+msgid "Page %s"
+msgstr ""
+
+#: inc/template-tags.php:23
+#@ mycitycard
+msgid "Posts navigation"
+msgstr ""
+
+#: inc/template-tags.php:27
+#@ mycitycard
+msgid "Older posts"
+msgstr ""
+
+#: inc/template-tags.php:31
+#@ mycitycard
+msgid "Newer posts"
+msgstr ""
+
+#: inc/template-tags.php:56
+#@ mycitycard
+msgid "Post navigation"
+msgstr ""
+
+#: inc/template-tags.php:86
+#, php-format
+#@ mycitycard
+msgctxt "post date"
+msgid "Posted on %s"
+msgstr ""
+
+#: inc/template-tags.php:91
+#, php-format
+#@ mycitycard
+msgctxt "post author"
+msgid "by %s"
+msgstr ""
+
+#. translators: used between list items, there is a space after the comma
+#: inc/template-tags.php:108
+#: inc/template-tags.php:114
+#@ mycitycard
+msgid ", "
+msgstr ""
+
+#: inc/template-tags.php:110
+#, php-format
+#@ mycitycard
+msgid "Posted in %1$s"
+msgstr ""
+
+#: inc/template-tags.php:116
+#, php-format
+#@ mycitycard
+msgid "Tagged %1$s"
+msgstr ""
+
+#: inc/template-tags.php:122
+#@ mycitycard
+msgid "Leave a comment"
+msgstr ""
+
+#: inc/template-tags.php:122
+#@ mycitycard
+msgid "1 Comment"
+msgstr ""
+
+#: inc/template-tags.php:122
+#@ mycitycard
+msgid "% Comments"
+msgstr ""
+
+#: inc/template-tags.php:143
+#, php-format
+#@ mycitycard
+msgid "Category: %s"
+msgstr ""
+
+#: inc/template-tags.php:145
+#, php-format
+#@ mycitycard
+msgid "Tag: %s"
+msgstr ""
+
+#: inc/template-tags.php:147
+#, php-format
+#@ mycitycard
+msgid "Author: %s"
+msgstr ""
+
+#: inc/template-tags.php:149
+#, php-format
+#@ mycitycard
+msgid "Year: %s"
+msgstr ""
+
+#: inc/template-tags.php:149
+#@ mycitycard
+msgctxt "yearly archives date format"
+msgid "Y"
+msgstr ""
+
+#: inc/template-tags.php:151
+#, php-format
+#@ mycitycard
+msgid "Month: %s"
+msgstr ""
+
+#: inc/template-tags.php:151
+#@ mycitycard
+msgctxt "monthly archives date format"
+msgid "F Y"
+msgstr ""
+
+#: inc/template-tags.php:153
+#, php-format
+#@ mycitycard
+msgid "Day: %s"
+msgstr ""
+
+#: inc/template-tags.php:153
+#@ mycitycard
+msgctxt "daily archives date format"
+msgid "F j, Y"
+msgstr ""
+
+#: inc/template-tags.php:156
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Asides"
+msgstr ""
+
+#: inc/template-tags.php:158
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Galleries"
+msgstr ""
+
+#: inc/template-tags.php:160
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Images"
+msgstr ""
+
+#: inc/template-tags.php:162
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Videos"
+msgstr ""
+
+#: inc/template-tags.php:164
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Quotes"
+msgstr ""
+
+#: inc/template-tags.php:166
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Links"
+msgstr ""
+
+#: inc/template-tags.php:168
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Statuses"
+msgstr ""
+
+#: inc/template-tags.php:170
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Audio"
+msgstr ""
+
+#: inc/template-tags.php:172
+#@ mycitycard
+msgctxt "post format archive title"
+msgid "Chats"
+msgstr ""
+
+#: inc/template-tags.php:175
+#, php-format
+#@ mycitycard
+msgid "Archives: %s"
+msgstr "Archives: %s"
+
+#. translators: 1: Taxonomy singular name, 2: Current taxonomy term
+#: inc/template-tags.php:179
+#, php-format
+#@ mycitycard
+msgid "%1$s: %2$s"
+msgstr ""
+
+#: inc/template-tags.php:181
+#@ mycitycard
+msgid "Archives"
+msgstr ""
+
+#: partials/temp-discount-preview.php:8
+#@ mycitycard
+msgid "50% off"
+msgstr "50% off"
+
+#: partials/temp-discount-preview.php:11
+#@ mycitycard
+msgid "La Cafeteria"
+msgstr "La Cafeteria"
+
+#: partials/temp-discount-preview.php:14
+#: partials/temp-header-top-site-branding.php:5
+#@ mycitycard
+msgid "Paris"
+msgstr "Paris"
+
+#: partials/temp-header-top-site-branding.php:2
+#@ mycitycard
+msgid "My"
+msgstr "My"
+
+#: partials/temp-header-top-site-branding.php:2
+#@ mycitycard
+msgid "City"
+msgstr "City"
+
+#: partials/temp-header-top-site-branding.php:2
+#@ mycitycard
+msgid "Card"
+msgstr "Card"
+
+#: search.php:16
+#, php-format
+#@ mycitycard
+msgid "Search Results for: %s"
+msgstr "Search Results for: %s"
+

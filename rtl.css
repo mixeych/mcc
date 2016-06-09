@@ -1,0 +1,36 @@
+/*
+Theme Name: mycitycard
+
+Adding support for language written in a Right To Left (RTL) direction is easy -
+it's just a matter of overwriting all the horizontal positioning attributes
+of your CSS stylesheet in a separate stylesheet file named rtl.css.
+
+http://codex.wordpress.org/Right_to_Left_Language_Support
+
+*/
+
+/*
+body {
+	direction: rtl;
+	unicode-bidi: embed;
+}
+*/
+
+.bcard, .wrap_login_logout {
+	float: left;
+	margin-left: 10px;
+}
+
+#simplemodal-login-container-osx {
+	text-align: right;
+}
+
+#simplemodal-login-container-osx .user_pass, #simplemodal-login-container-osx .user_login, #simplemodal-login-container-osx .user_email {
+	margin-right: 0;
+}
+
+#simplemodal-login-container-osx .close {
+	left: 0;
+	right: auto;
+}
+

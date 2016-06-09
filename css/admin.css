@@ -1,0 +1,26 @@
+.toplevel_page_theme-options .categories-order li{
+	max-width: 130px;
+	margin: 15px;
+}
+.toplevel_page_theme-options .categories-order{
+	text-align:right;
+}
+.theme-options_page_promotions .star{
+	width:20px;
+	cursor:pointer;
+	opacity: 0.3;
+}
+.theme-options_page_promotions .star.main-promo{
+	width:35px;
+	cursor:pointer;
+	opacity: 0.5;
+}
+.theme-options_page_promotions span.button{
+	cursor:pointer;
+}
+.theme-options_page_promotions .biz-logo{
+	width: 65px;
+}
+.theme-options_page_promotions .star.promo{
+	opacity:1;
+}
