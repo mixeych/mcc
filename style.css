@@ -2930,11 +2930,15 @@ height: 56px;
   margin-left: 14px;
 }
 
-.business_page_benefit_discount img {
+.business_page_benefit_discount img,.business_page_benefit_discount {
 max-width: 82px;
 	max-height: 82px;
 }
+.business_page_benefit_discount{
+	min-width: 82px;
 
+	min-height: 82px;
+}
 .business_page_benefit_details {
 float:left;
 width:46%;
@@ -3234,6 +3238,7 @@ margin-top: 20px;
 }
 
 #manage_business_benefits table th {
+	padding: 8px;
 line-height: 2;
 }
 #manage_business_benefits tr.err td,#manage_business_benefits tr.err td span{
@@ -3241,6 +3246,7 @@ line-height: 2;
 }
 #manage_business_benefits tr.active td,#manage_business_benefits tr.active td span{
 	color: #418b19!important;
+	padding: 20px;
 }
 .main-benefit tr{
 	border-bottom: 1px solid #cccccc;
@@ -3301,7 +3307,8 @@ padding: 5px 10px;
 margin: 10px 5px;
 color: #fff;
 display: inline-block;
-
+width: 100%;
+text-align: center;
 }
 
 .messageDelete img, .benefitDelete img {
@@ -4282,7 +4289,7 @@ margin: 0;
 .premium-sentence{
 	float: left;
 	width: 33.33333333%;
-	height: 890px;
+	height: 947px;
 	border: 1px solid #d6d6d6;
 	position: relative;
 	top: -20px; 
@@ -4672,4 +4679,28 @@ article .business_logo img{
 }
 #user_login{
 	margin-left: 29px;
+}
+.message-popup{
+	width: 290px;
+	margin: 0 auto;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	background-color: #fff;
+        z-index: 1999999999;
+}
+.message-popup .popup-content{
+	text-align: center;
+}
+.message-popup .popup-content button{
+	margin: 10px 0;
+}
+.message-popup .popup-content h3{
+margin: 10px 0;
+}
+.popup-close{
+	float: right;
+	margin: 5px;
+	cursor: pointer;
 }

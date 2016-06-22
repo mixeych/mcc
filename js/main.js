@@ -10,9 +10,7 @@ jQuery(document).bind('gform_confirmation_loaded', function(event, formId){
 });
 
 jQuery(document).ready(function($) {
-        
-           
-        
+
 	if($("body").hasClass("page-id-126")||$("body").hasClass("page-id-747")){
 		
                 var bizUserRole = $("#accordion-1").attr("data-bizrole");
@@ -65,23 +63,23 @@ jQuery(document).ready(function($) {
                 if(!checked){
                     return false;
                 }
-//                var payForYear = $(this).parent().siblings(".body-sentence-item").find(".pay-for-year").prop("checked");
-//                var price;
-//                var currentPack = $(this).attr('data-currentPack');
-//                if(currentPack==='Basic'&&payForYear){
-//                    price = 570;
-//                }else if(payForYear&&$(this).parents(".premium-sentence").length&&currentPack !== 'Basic'){
-//                    price = 600;
-//                }else if(currentPack==='Basic'&&!payForYear){
-//                    price = 20;
-//                }else{
-//                    price = $(this).parent().siblings(".body-sentence-item").find(".price").text();
-//                }
-//                price = "sum="+price;
-//                var url = $(".popup-content iframe").attr("src");
-//                var newUrl = url.replace(/sum=([0-9]+)/, price);
-//                $(".custom-popup .popup-content iframe").attr("src", newUrl);
-//		$(".popmake-overlay").css("background-color", "rgba( 12, 12, 12, 0.8 )").fadeIn(200);
+                var payForYear = $(this).parent().siblings(".body-sentence-item").find(".pay-for-year").prop("checked");
+                var price;
+                var currentPack = $(this).attr('data-currentPack');
+                if(currentPack==='Basic'&&payForYear){
+                    price = 570;
+                }else if(payForYear&&$(this).parents(".premium-sentence").length&&currentPack !== 'Basic'){
+                    price = 600;
+                }else if(currentPack==='Basic'&&!payForYear){
+                    price = 20;
+                }else{
+                    price = $(this).parent().siblings(".body-sentence-item").find(".price").text();
+                }
+                price = "sum="+price;
+                var url = $(".popup-content iframe").attr("src");
+                var newUrl = url.replace(/sum=([0-9]+)/, price);
+                $(".custom-popup .popup-content iframe").attr("src", newUrl);
+		$(".popmake-overlay").css("background-color", "rgba( 12, 12, 12, 0.8 )").fadeIn(200);
 		$(".custom-popup").fadeIn(200);
                 
 	});
@@ -121,7 +119,7 @@ jQuery(document).ready(function($) {
                 }
             });
         });
-
+        
 	$(".popup-close").click(function(){
 		$(".popmake-overlay").fadeOut(200);
 		$(this).parents(".popup").fadeOut(200);
@@ -129,26 +127,72 @@ jQuery(document).ready(function($) {
         
         $(".btn-by-package").click(function(e){
             e.preventDefault();
-            var res = confirm("Are you sure?");
-            if(!res){
+            var price = $(this).attr("data-price");
+            if($(".message-popup").length){
+                var number;
+                switch(price){
+                    case '20': number = 1000;
+                        break;
+                    case '30': number = 2000;
+                        break;
+                    case '100': number = 10000;
+                        break;
+                    case '60': number = 5000;
+                        break;
+                }
+                $(".message-popup span.number").html(number);
+                $(".message-popup input.sum").val(price);
+                $(".message-popup").fadeIn(200);
+                $(".popmake-overlay").css("background-color", "rgba( 12, 12, 12, 0.8 )").fadeIn(200);
+            }else{
+                price = "sum="+price;
+                var url = $(".popup-content iframe").attr("src");
+                var newUrl = url.replace(/sum=([0-9]+)/, price);
+
+                newUrl = newUrl.replace(/product=package/, 'product=messages');
+                $(".custom-popup .popup-content iframe").attr("src", newUrl);
+		$(".popmake-overlay").css("background-color", "rgba( 12, 12, 12, 0.8 )").fadeIn(200);
+		$(".custom-popup").fadeIn(200);
+            }
+        });
+        
+        $(".message-popup .popup-close").click(function(){
+            $(".message-popup").fadeOut(200);
+            $(".popmake-overlay").fadeOut(200);
+        });
+        
+        $("#remove-credit-card").click(function(){
+           var res = confirm('Are you sure?');
+           if(!res){
                 return false;
             }
-            var price = $(this).attr("data-price");
             $.ajax({
-                url: ajaxurl+"?action=byNewMessages",
+                url: ajaxurl+"?action=removeCreditCard",
                 type: 'POST',
-                data: {
-                    price: price,
-                },
                 dataType: 'json',
                 success: function(res){
                     if(res.success){
-                        var mes = "You have "+res.amount+" messages";
-                        alert(mes);
+                        alert("card removed");
                     }
                 }
             });
-        })
+        });
+        $("#change-credit-card").click(function(){
+           var res = confirm('Are you sure?');
+           if(!res){
+                return false;
+            }
+            $.ajax({
+                url: ajaxurl+"?action=removeCreditCard",
+                type: 'POST',
+                dataType: 'json',
+                success: function(res){
+                    if(res.success){
+                        window.location.reload();
+                    }
+                }
+            });
+        });
         
 	/*change logo*/
 	

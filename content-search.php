@@ -38,10 +38,12 @@ $bCity = get_field("bcity", $bizId);
 			}
                         $benId = get_sub_field('benefit_id');
                         $benefitFavClass = 'addFavBenefit';
+                        $starSrc = 'benefit_star.png';
                         if(is_array($favBens)){
                             foreach($favBens as $favBen){
                                 if($favBen['benefit_id'] == $benId){
                                     $benefitFavClass = "FavBenefit";
+                                    $starSrc = 'greenstar.png';
                                 }
                             }
                         }
@@ -62,7 +64,7 @@ $bCity = get_field("bcity", $bizId);
 				</p>
 			</div>
                         <?php if(is_user_logged_in()): ?>
-			<a href="javascript:void(0)" class="business_page_benefit_fav <?=$benefitFavClass;?>" data-business-id="<?php the_ID();?>" data-benefit-id="<?=the_sub_field('benefit_id');?>"><img src="<?php bloginfo('template_directory'); ?>/images/benefit_star.png" alt="" /></a>
+			<a href="javascript:void(0)" class="business_page_benefit_fav <?=$benefitFavClass;?>" data-business-id="<?php the_ID();?>" data-benefit-id="<?=the_sub_field('benefit_id');?>"><img src="<?php bloginfo('template_directory'); ?>/images/<?php echo $starSrc; ?>" alt="" /></a>
                         <?php endif; ?>
 		</div>
 	</a>

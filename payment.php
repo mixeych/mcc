@@ -7,7 +7,7 @@ global $current_user;
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     check_user_auth();
 }
-if(is_user_logged_in()&&$current_user->caps['subscriber']){
+if(is_user_logged_in()&&isset($current_user->caps['subscriber'])){
 	wp_redirect(home_url());
 }
 global $sitepress;
@@ -22,13 +22,6 @@ $args = array(
 $business = get_posts( $args ); 
 
 $messages_have = get_post_meta($business[0]->ID, 'messages_have', true);
-$res = update_post_meta($business[0]->ID, 'messages_have', 100);
-var_dump($res);
-if($res){
-    echo "You have 100 messages";
-}else{
-    echo "You have $messages_have messages";
-}
 $business_pack = get_field("business_pack", $business[0]->ID);
 
 if(have_posts()){
@@ -48,13 +41,16 @@ $id = get_the_id();
 
                                         <p>You are currently a: <?php echo $business_pack ?> user.</p>
 <?php 
-$tranzillaInfo = get_user_meta($current_user->ID, 'tranzillaInfo', true);
-if(!empty($tranzillaInfo)):
-    $tranzillaInfo = unserialize($tranzillaInfo);
+$tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
+if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 ?>
                                         <p>Payment amount: <?php echo $tranzillaInfo['paymentAmount'] ?> NIS + vat per month ()</p>
-                                        <p>Card number: xxxx-xxxx-xxxx-<?php echo$tranzillaInfo['cardNumber'] ?></p>
+                                        <?php if($tranzillaInfo['cardNumber']): ?>
+                                        <p>Card number: xxxx-xxxx-xxxx-<?php echo $tranzillaInfo['cardNumber'] ?></p>
+                                        <?php endif; ?>
+                                        <?php if($tranzillaInfo['expmonth']&&$tranzillaInfo['expyear']): ?>
                                         <p>Card expiration date: <?php echo $tranzillaInfo['expmonth'] ?>/<?php echo $tranzillaInfo['expyear'] ?></p>
+                                        <?php endif; ?>
                                         <p>Next Payment date: <?php echo date('d.m.Y' ,$tranzillaInfo['nextPaymentDate']) ?></p>
 <?php endif; ?>
                                         <?php if($business_pack != 'Premium'): ?>
@@ -67,7 +63,7 @@ if(!empty($tranzillaInfo)):
                                         <?php 
                                         endif; 
                                         if(!empty($tranzillaInfo)): ?>
-                                        <p><a href="#">Change card</a> | <a href="#">Remove card</a></p>
+                                        <p><a id="change-credit-card" href="#">Change card</a> | <a id="remove-credit-card" href="#">Remove card</a></p>
                                                 <?php endif; ?>
 				</div>
 				<div class="sentence">
@@ -209,31 +205,38 @@ $tranmode = 'AK';
                              </iframe>
 			</div>
 		</div>
+                        
+                <?php 
+                    $tranzillaInfo = get_user_meta($current_user->ID, 'tranzillaInfo', true);
+                    $tranzillaInfo = unserialize($tranzillaInfo);
+                    if(!empty($tranzillaInfo)):
+                        $tranilaPW = 'wiBVEw';
+                        if($tranilaPW):
+                            $terminal_name = 'ttxmycitytok';
+                            //$tranilaPW = $tranilaPW['token'];
+                            $token = $tranzillaInfo['token'];
+                            $expdate = $tranzillaInfo['expmonth'].$tranzillaInfo['expyear'];
+                            $sum = 20;
+                            $currency = $tranzillaInfo['currency'];
+                            $cred_type = 1;
+                            
+                            
+                ?>
+                <?php 
+                    if(isset($tranzillaInfo['token'])&&!empty($tranzillaInfo['token'])):
+                ?>
 		<div class="popup message-popup" style="display:none">
 			<span class="popup-close">X</span>
+                       
 			<div class="popup-content">
-                            <iframe
-                                width="455px"
-                                height="500px;" 
-                                src="https://direct.tranzila.com/<?php echo $terminal_name ?>/iframe.php?
-                                 sum=<?php echo $sum; // required field ?> 
-                                 &currency=<?php echo $currency; // required field ?>
-                                 &cred_type=<?php echo $cred_type; //required field ?>
-                                 &lang=<?php echo $lang;?>
-                                 &nologo=<?php echo $logo; ?>
-                                 &trBgColor=<?php echo $trBgColor; ?>
-                                 &trTextColor=<?php echo $trTextColor; ?>
-                                 &trButtonColor=<?php echo $trButtonColor; ?>
-                                 &buttonLabel=<?php echo $buttonLabel; ?>
-                                 &tranmode=<?php echo $tranmode; ?>
-                                 &MCCUserID=<?php echo $current_user->ID ?>
-                                 &product=messages
-                               "
-                                frameborder="0"
-                                >
-                             </iframe>
+                            <h3>You want to buy <span class="number"></span>messages</h3>
+                            <form action="<?php echo home_url('/payment-process/') ?>" method="post">
+                                <input class="sum" type="hidden" name="messages" value="">
+                                <button class="btn btn-info">Pay</button>
+                            </form>
 			</div>
 		</div>
+                <?php endif; endif; endif; ?>
 <?php endif; ?>
 	</div>
 <?php 

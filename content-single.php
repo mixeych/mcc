@@ -276,7 +276,13 @@ function initMap() {
 							<?=$validThru?>
 						</p>
 					</div>
-					<a href="javascript:void(0)" class="business_page_benefit_fav <?=$benefitFavClass;?>" data-business-id="<?php echo $post_id; ?>" data-benefit-id="<?=the_sub_field('benefit_id');?>"><img src="<?php bloginfo('template_directory'); ?>/images/benefit_star.png" alt="" /></a>
+<?php
+    $bizBenImgSrc = '/images/benefit_star.png';
+    if($benefitFavClass == 'FavBenefit'){
+        $bizBenImgSrc = '/images/greenstar.png';
+    }
+?>
+					<a href="javascript:void(0)" class="business_page_benefit_fav <?=$benefitFavClass;?>" data-business-id="<?php echo $post_id; ?>" data-benefit-id="<?=the_sub_field('benefit_id');?>"><img src="<?php bloginfo('template_directory'); ?><?php echo $bizBenImgSrc ?>" alt="" /></a>
 				</div>
 			<?php
 				} 

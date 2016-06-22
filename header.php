@@ -6,7 +6,10 @@
  *
  * @package mycitycard
  */
-	session_start();
+$sessStatus = session_status();
+    if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
+        session_start();
+    }
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
 <head>
@@ -41,7 +44,7 @@ Click to watch $title benefits in $cityName";
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
 
 
-<?php wp_head(); 
+<?php 
 global $sitepress;
 global $current_user;
 
@@ -56,7 +59,7 @@ $lang = get_bloginfo('language');
   <link rel="stylesheet" type="text/css" href="<?php bloginfo('template_directory'); ?>/css/business.css">
 <?php } ?>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
+<?php wp_head();  ?>
 </head>
 
 <body <?php body_class(); ?>>

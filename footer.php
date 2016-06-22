@@ -187,10 +187,6 @@ $role = get_current_user_role();
 
 </script>
 <script>
-
-
-</script>
-<script>
 	jQuery(function($) {
 
 		$("#cities span a").click(function(e) {

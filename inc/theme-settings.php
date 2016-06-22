@@ -63,7 +63,10 @@ function add_theme_options(){
 function tranzilla_password_callback(){
     
     $val = get_option('tranzilla_password');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
+    
     ?>
     
     <input name="tranzilla_password[input]" type="password" value="<?php echo $val ?>" />
@@ -71,11 +74,11 @@ function tranzilla_password_callback(){
 }
 
 function tranzilla_terminal_name_callback(){
-    
     $val = get_option('tranzilla_terminal_name');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
     ?>
-    
     <input name="tranzilla_terminal_name[input]" type="test" value="<?php echo $val ?>" />
     <?php
 }
@@ -88,6 +91,8 @@ function add_download_setting(){
     register_setting( 'theme_setting', 'contact_email' );
     register_setting('tranzilla_settings', 'tranzilla_terminal_name');
     register_setting('tranzilla_settings', 'tranzilla_password');
+    register_setting('tranzilla_settings', 'token_password');
+    register_setting('tranzilla_settings', 'token_login');
     add_settings_section( 'theme_options', 'Theme options', '', 'theme-options' );
     add_settings_section( 'contact-links', 'Contact Links', '', 'theme-options' );
     add_settings_section( 'tranzilla_sections', 'Tranzilla Settings', '', 'tranzilla-options' );
@@ -98,6 +103,7 @@ function add_download_setting(){
         'tranzilla-options', // page
         'tranzilla_sections' // section
     );
+    
     add_settings_field(
         'tranzilla_terminal_name',
         'Terminal Name',
@@ -105,6 +111,21 @@ function add_download_setting(){
         'tranzilla-options', // page
         'tranzilla_sections' // section
     );
+    add_settings_field(
+        'token_login',
+        'Token Login',
+        'token_login_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'token_password',
+        'Token password',
+        'token_password_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    
     add_settings_field(
         'categories_order',
         'Order of the main categories',
@@ -139,7 +160,9 @@ function add_download_setting(){
 function categories_order_callback(){
     
     $val = get_option('categories_order');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
     ?>
     
     <ul class='categories-order'>
@@ -155,17 +178,44 @@ function categories_order_callback(){
 function facebook_link_callback(){
     
     $val = get_option('facebook_link');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
     ?>
     
     <input name="facebook_link[input]" type="text" value="<?php echo $val ?>" />
+    <?php
+}
+function token_login_callback(){
+    
+    $val = get_option('token_login');
+    if($val){
+        $val = $val['input'];
+    }
+    
+    ?>
+    
+    <input name="token_login[input]" type="text" value="<?php echo $val ?>" />
+    <?php
+}
+function token_password_callback(){
+    
+    $val = get_option('token_password');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="token_password[input]" type="password" value="<?php echo $val ?>" />
     <?php
 }
 
 function twitter_link_callback(){
     
     $val = get_option('twitter_link');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
     ?>
     
     <input name="twitter_link[input]" type="text" value="<?php echo $val ?>" />
@@ -175,7 +225,9 @@ function twitter_link_callback(){
 function contact_email_callback(){
 	
     $val = get_option('contact_email');
-    $val = $val['input'];
+    if($val){
+        $val = $val['input'];
+    }
     ?>
     
     <input name="contact_email[input]" type="text" value="<?php echo $val ?>" />

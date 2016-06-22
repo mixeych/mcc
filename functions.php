@@ -1048,8 +1048,7 @@ function update_business_details($entry, $form){
 add_action("gform_post_submission_3", "update_business_category", 10, 2);
 add_action("gform_post_submission_10", "update_business_category", 10, 2);
 function update_business_category($entry, $form){
-	//print_r($entry);
-	
+	global $wpdb;
 	global $current_user;
 	$args = array(
 		'author' => $current_user->ID,
@@ -1081,9 +1080,25 @@ function update_business_category($entry, $form){
 
 	if($entry[6])
 		$cat_array[] = $entry[6];
-	
-
+        $visPost = get_post_meta($business[0]->ID, 'visibility', true);
 	$res = wp_set_post_terms($business[0]->ID, $cat_array, 'business_cat');
+}
+
+add_action('set_object_terms', 'mccChangeVisiblePostsTerm', 10, 6);
+function mccChangeVisiblePostsTerm($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids){
+    if($taxonomy != 'business_cat'){
+        return;
+    }
+    $isVisible = get_post_meta($object_id, 'visibility', true);
+    if(empty($isVisible)){
+        return;
+    }
+    foreach($old_tt_ids as $oldTTid){
+        delete_visible_post($object_id, $oldTTid);
+    }
+    foreach($tt_ids as $newTTid){
+        add_visible_post($object_id, $newTTid);
+    }
 }
 
 // Update Likes Count
@@ -1499,12 +1514,12 @@ function activateSocialLoggedInUsers($user_id, $provider, $hybridauth_user_profi
     update_field("active_user", 1, "user_".$user_id);
 }
 
-function do_on_login($login) {
+function do_on_login($login, $user) {
+    $sessStatus = session_status();
     if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
         session_start();
     }
     
-    $user = get_user_by('login',$login);
     if(get_field("active_user", "user_".$user->ID) != 1){
         wp_logout();
         $redirect = '/log-in/?user=notactivated';
@@ -1525,7 +1540,7 @@ function do_on_login($login) {
 
     $_SESSION['my_cityz'] = get_field("field_56680b158ee8c", "user_".$user_ID)->ID;
 }
-add_action('wp_login', 'do_on_login', 99);
+add_action('wp_login', 'do_on_login', 10, 2);
 
 function enqueue_popup_city(){
     wp_enqueue_script('cityscript', get_template_directory_uri() . '/js/citychoosing.js', array('jquery'), true );
@@ -2990,9 +3005,12 @@ function side_categories() {
 		if($subCats) {
 
 			$subCatsHTML .= '<ul>';
+                        $selectedSubCat = false;
 			foreach($subCats as $sCat) {
 				$thisSCat = $current_tax == $sCat->name?"selected_cat":"";
-
+                                if(!empty($thisSCat)){
+                                    $selectedSubCat = true;
+                                }
 				$siclId = icl_object_id($sCat->term_id, 'business_cat', true, 'en');
 				if(isset($_SESSION["my_cityz"]) && $_SESSION["my_cityz"] != 'All'){
 					$siclId = (int) icl_object_id($sCat->term_id, 'business_cat', true, 'en');
@@ -3041,8 +3059,7 @@ function side_categories() {
 			$term_id = (int) $iclId;
 			$link = get_term_link($term_id, 'business_cat');
 			$subCatsHTML .= '</ul>';
-
-			if($countSub == 0||($sCat->name!=$current_tax&&$category->name != $current_tax)){
+			if($countSub == 0||(!$selectedSubCat&&$category->name != $current_tax)){
 				$subCatsHTML = '';
 			}
 			$catsHTML .= '<li class="'.$thisCat.'"><a href="'.$link. '" class="menu-side-arrow">' .$category->name; '</a>' .$subCatsHTML. '</li>';
@@ -4184,8 +4201,15 @@ function addUserLoginTime( $user_login, $user ) {
 }
 add_action('wp_login', 'addUserLoginTime', 10, 2);
 
-add_action('init', 'checkPaymentDate');
+add_action('wp', 'checkPaymentDate');
 function checkPaymentDate(){
+    if (defined('DOING_AJAX') && DOING_AJAX) {
+        return;
+    }
+    
+    if(is_page(4566)){
+        return;
+    }
     global $current_user;
     if(in_array('subscriber', $current_user->roles)){
         return;
@@ -4193,8 +4217,51 @@ function checkPaymentDate(){
     if(!class_exists('MCCTranzillaPayment')){
         return;
     }
-    $tranz = new MCCTranzillaPayment();
-    $tranz->sendRecurringPayment();
+    $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
+    if(empty($tranzillaInfo)){
+        return;
+    }
+    
+    $currentTime = time();
+    if(!isset($tranzillaInfo['nextPaymentDate'])||empty($tranzillaInfo['nextPaymentDate'])){
+        return;
+    }
+    if($currentTime < $tranzillaInfo['nextPaymentDate']){
+        return false;
+    }
+    $args = array(
+        'author' => $current_user->ID,
+        'posts_per_page'   => 1,
+        'post_type'        => 'business'
+    );
+    $business = get_posts( $args ); 
+    $business = $business[0];
+    if(isset($tranzillaInfo['stopPaying'])&&true===$tranzillaInfo['stopPaying']){
+        $tranzillaInfo = array();
+        update_field("business_pack", "Free", $business->ID);
+        update_user_meta($current_user->ID, 'tranzillaInfo', '');
+        return;
+    }
+    if($tranzillaInfo['business_pack'] == 'premium_year'){
+        if($currentTime >= $tranzillaInfo['paymentYear']){
+            $tranzillaInfo = array();
+            update_user_meta($current_user->ID, 'tranzillaInfo', '');
+            update_field("business_pack", "Free", $business->ID);
+            wp_redirect(home_url('/payment/'));
+            die();
+        }
+        $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+        $mesHave = $mesHave+1500;
+        update_post_meta($business->ID, 'messages_have', $mesHave);
+        $nextpaymentDate = $currentTime+2592000;
+        $tranzillaInfo['nextPaymentDate'] = $nextpaymentDate;
+        $ser = serialize($tranzillaInfo);
+        update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
+        return;
+    }
+    $url = get_permalink(4566);
+    wp_redirect($url);
+    die();
 }
 
 add_action('wp_ajax_stopPaying', 'MCCTranzillaStopPaying');
@@ -4205,6 +4272,7 @@ function MCCTranzillaStopPaying(){
         echo json_encode(array('success' => false));
         die();
     }
+    $tranzillaInfo = unserialize($tranzillaInfo);
     $tranzillaInfo['stopPaying'] = true;
     $ser = serialize($tranzillaInfo);
     $res = update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
@@ -4219,13 +4287,41 @@ add_action('wp_ajax_downgrade', 'MCCTranzillaDowngrade');
 function MCCTranzillaDowngrade(){
     global $current_user;
     $tranzillaInfo = get_user_meta($current_user->ID, 'tranzillaInfo', true);
-    if(empty($tranzillaInfo)||$tranzillaInfo['business_pack'] === 'Basic'){
+    if(empty($tranzillaInfo)){
+        echo json_encode(array('success' => false));
+        die();
+    }
+    $tranzillaInfo = unserialize($tranzillaInfo);
+    if($tranzillaInfo['business_pack'] === 'Basic'){
         echo json_encode(array('success' => false));
         die();
     }
     $tranzillaInfo['downgrade'] = 'basic';
     $tranzillaInfo['paymentAmount'] = '30';
-    $tranzillaInfo['business_pack'] = 'basic';
+    $tranzillaInfo['business_pack'] = 'Basic';
+    $ser = serialize($tranzillaInfo);
+    $res = update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
+    if($res){
+        echo json_encode(array('success' => true));
+        die();
+    }
+    echo json_encode(array('success' => false));
+    die();
+}
+
+add_action('wp_ajax_removeCreditCard', 'removeCreditCard');
+function removeCreditCard(){
+    global $current_user;
+    $tranzillaInfo = get_user_meta($current_user->ID, 'tranzillaInfo', true);
+     if(empty($tranzillaInfo)){
+        echo json_encode(array('success' => false));
+        die();
+    }
+    $tranzillaInfo = unserialize($tranzillaInfo);
+    $tranzillaInfo['token'] = '';
+    $tranzillaInfo['expmonth'] = '';
+    $tranzillaInfo['expyear'] = '';
+    $tranzillaInfo['cardNumber'] = '';
     $ser = serialize($tranzillaInfo);
     $res = update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
     if($res){

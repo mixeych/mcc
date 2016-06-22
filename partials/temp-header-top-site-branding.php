@@ -1,6 +1,8 @@
 <?php
-session_start();
-
+$sessStatus = session_status();
+    if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
+        session_start();
+    }
 ?>
 <div class="site-branding">
 	<h1 class="site-title"><a href="<?php echo esc_url( home_url( '/' ) ); ?>" rel="home"><?php _e("My", "mycitycard"); ?><span><?php _e("City", "mycitycard"); ?></span><?php _e("Card", "mycitycard"); ?></a></h1>

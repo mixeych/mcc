@@ -2,27 +2,36 @@
 /*
  * Template Name: Payment response
  */
+if($_SERVER['REQUEST_METHOD'] !== 'POST'){
+    wp_redirect(home_url());
+    die();
+}
 $response = htmlspecialchars($_POST["Response"]);
+
 $token = htmlspecialchars($_POST["TranzilaTK"]);
 if (!$response) {
     wp_redirect(home_url());
     die();
 }
-get_header();
+//get_header();
 ?>
 <div class="container">
 <?php
-if ($response !== '000' && !$token) {
+if ($response !== '000' || !$token) {
+    
     ?>
     <p class="status status-failed">Transaction: Failed</p> 
-
+    <p>Error Code: <?php echo $response; ?></p>
     <?php } else {
-        $user_id = (int) $_POST['MCCUserID'];
+        $user_id = '';
+        if(isset($_POST['MCCUserID'])){
+            $user_id = (int) $_POST['MCCUserID'];
+        }
         $paymentDate = time();
         $nextpaymentDate = $paymentDate+2592000;
         
         $args = array(
-            'author' => $current_user->ID,
+            'author' => $user_id,
             'posts_per_page'   => 1,
             'post_type'        => 'business'
         );
@@ -31,7 +40,9 @@ if ($response !== '000' && !$token) {
         if($_POST['sum']&&$_POST['product'] == 'package'){
             switch($_POST['sum']){
                 case '50': update_field("business_pack", "Premium", $business->ID);
-                    update_post_meta($business->ID, 'messages_have', 1000);
+                    $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                    $mesHave = $mesHave+1000;
+                    update_post_meta($business->ID, 'messages_have', $mesHave);
                     $business_back = "premium_month";
                     $paymentYear = '';
                     $paymentAmount = $_POST['sum'];
@@ -67,7 +78,6 @@ if ($response !== '000' && !$token) {
                         $paymentYear = $paymentDate+34128000;
                     }
                     break;
-                    
             }
             $tranzillaArr = array(
                 'token' => $token,
@@ -78,7 +88,7 @@ if ($response !== '000' && !$token) {
                 'paymentAmount' => $paymentAmount,
                 'paymentDate' => time(),
                 'nextPaymentDate' => $nextpaymentDate,
-                'cred_type' => $_POST['cred_type: 6'],
+                'cred_type' => $_POST['cred_type'],
                 'currency' => $_POST['currency'],
                 'business_pack' => $business_back,
                 'paymentYear' => $paymentYear,
@@ -86,7 +96,39 @@ if ($response !== '000' && !$token) {
             $ser = serialize($tranzillaArr);
             update_user_meta($user_id, 'tranzillaInfo', $ser);
         }elseif($_POST['sum']&&$_POST['product'] == 'messages'){
-            
+            switch($_POST['sum']){
+                case '20': 
+                    $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                    $mesHave = $mesHave+1000;
+                    update_post_meta($business->ID, 'messages_have', $mesHave);
+                    break;
+                case '30': 
+                    $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                    $mesHave = $mesHave+2000;
+                    update_post_meta($business->ID, 'messages_have', $mesHave);
+                    break;
+                case '60': 
+                    $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                    $mesHave = $mesHave+5000;
+                    update_post_meta($business->ID, 'messages_have', $mesHave);
+                    break;
+                case '100': 
+                    $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                    $mesHave = $mesHave+10000;
+                    update_post_meta($business->ID, 'messages_have', $mesHave);
+                    break;
+            }
+            $tranzillaInfo = unserialize(get_user_meta($user_id, 'tranzillaInfo', true));
+            if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)){
+                if(empty($tranzillaInfo['token'])){
+                    $tranzillaInfo['token'] = $token;
+                    $tranzillaInfo['expmonth'] = $_POST['expmonth'];
+                    $tranzillaInfo['expyear'] = $_POST['expyear'];
+                    $tranzillaInfo['cardNumber'] = $_POST['ccno'];
+                }
+                $ser = serialize($tranzillaInfo);
+                update_user_meta($user_id, 'tranzillaInfo', $ser);
+            }
         }
     ?>
       <p class="status status-success">Transaction: Succeed</p>
@@ -95,4 +137,4 @@ if ($response !== '000' && !$token) {
 
 ?>    
 </div>
-<?php get_footer(); ?>
+<?php //get_footer(); ?>
