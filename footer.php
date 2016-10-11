@@ -7,6 +7,8 @@
  * @package mycitycard
  */
 $role = get_current_user_role();
+global $sitepress;
+$current_language = $sitepress->get_current_language();
 ?>
 
 	</div><!-- #content -->
@@ -40,10 +42,21 @@ $role = get_current_user_role();
 				<div class="more-box">
 					<h5>More</h5>
 					<ul>
-					<li><a href="<?php echo get_permalink(1753) ?>">About</a></li>
-					<li><a href="<?php echo get_permalink(1755) ?>">Help</a></li>
-					<li><a href="<?php echo get_permalink(1757) ?>">Contact Us</a></li>
-					</ul>
+                                    <?php 
+                                    global $sitepress;
+                                    $current_language = $sitepress->get_current_language();
+                                    if($current_language === 'en'): 
+                                    ?>
+										<li><a href="<?php echo get_permalink(1753) ?>">About</a></li>
+										<!-- <li><a href="<?php echo get_permalink(1755) ?>">Help</a></li> -->
+										<li><a href="<?php echo get_permalink(1757) ?>">Contact Us</a></li>
+					
+                                    <?php else: ?>
+                                        <li><a href="<?php echo get_permalink(1753) ?>">אודות</a></li>
+									<!-- 	<li><a href="<?php echo get_permalink(1755) ?>">Help</a></li> -->
+										<li><a href="<?php echo get_permalink(1757) ?>">צור קשר</a></li>
+                                    <?php endif; ?>
+                                    </ul>
 					<?php
 						$val = get_option('facebook_link');
     					$val = $val['input'];
@@ -78,17 +91,38 @@ $role = get_current_user_role();
 					<?php endif; ?>
 					<h5>Work with Us</h5>
 					<ul>
-						<li><a href="#">Become a city owner!</a></li>
+								<?php 
+                                    global $sitepress;
+                                    $current_language = $sitepress->get_current_language();
+                                    if($current_language === 'en'): 
+                                    ?>
+										<li><a href="#">Become a city owner!</a></li>
+					
+                                    <?php else: ?>
+                                 	 <li><a href="#">הפוך לראש עיר</a></li>
+                                    <?php endif; ?>
+						
 					</ul>
 					
 				</div>
 			</div>
 			<div class="container-inner-bot clearfix">
 				<ul>
-
-					<li><a href="#">All Rights Reserved to MCC</a></li>
-					<li><a href="#">Terms of Use</a></li>
-					<li><a href="#">Privacy Policy</a></li>
+					 <?php 
+                                    global $sitepress;
+                                    $current_language = $sitepress->get_current_language();
+                                    if($current_language === 'en'): 
+                                    ?>
+										<li><a href="#">All Rights Reserved to MCC</a></li>
+										<li><a href="#">Terms of Use</a></li>
+										<li><a href="#">Privacy Policy</a></li>
+					
+                                    <?php else: ?>
+                                     <li><a href="#">All Rights Reserved to MCC</a></li>
+									<li><a href="#">תנאי שימוש</a></li>
+									<li><a href="#">מדיניות פרטיות</a></li>
+                                    <?php endif; ?>
+					
 				</ul>
 				<span>
 					Built by Gal, Designed by Ofri
@@ -105,11 +139,12 @@ $role = get_current_user_role();
 <div id="responsive-menu">
 	<div id="responsive-menu-title">
 		<?php
-		if( $role == 'Subscriber' ){
-			wp_nav_menu( array('menu' => 'Cusomer menu' ) );
-		}else{
-			wp_nav_menu( array('menu' => 'Main Menu english' ) );
-		}
+//		if( $role == 'Subscriber' ){
+//			wp_nav_menu( array('menu' => 'Cusomer menu' ) );
+//		}else{
+//			wp_nav_menu( array('menu' => 'Main Menu english' ) );
+//		}
+                echo do_shortcode('[side_categories]');
 		?>
 	</div>
 </div>
@@ -119,11 +154,18 @@ $role = get_current_user_role();
 <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.1/js/i18n/en.js'></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.full.js"></script>
 <script src="<?=bloginfo("template_url");?>/js/js.cookie.js"></script>
+<script src="<?=bloginfo("template_url");?>/js/chosen.jquery.js"></script>
 <script type="text/javascript">
 
 	jQuery( document ).ready(function() {
 		jQuery('.logo-choose').append(jQuery(".main-logo"));
+                <?php 
+                if($current_language === 'en'):
+                ?>
 		jQuery('.logo-choose').append(jQuery('<div class="gfield_description">Square sized, at least 90x90 pixels.</div>'));
+                <?php else: ?>
+                    jQuery('.logo-choose').append(jQuery('<div class="gfield_description">ריבוע, לפחות 90*90 פיקסלים</div>'));
+                <?php endif; ?>
 		jQuery('.logo-choose').append(jQuery("#logo_preview"));
 	});
 
@@ -228,6 +270,13 @@ $role = get_current_user_role();
 			});
 		});	
 	});
+		$(document).ready(function(){
+			if($('body').hasClass('rtl')){
+				$("#input_17_1").addClass('chosen-rtl');
+			}
+		$("#input_17_1").addClass('chosen-select');
+		 $("#input_17_1").chosen(); 
+		})
 </script>
 
 <?php wp_footer(); ?>

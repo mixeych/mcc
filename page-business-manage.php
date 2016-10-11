@@ -348,7 +348,7 @@ if(empty($business_pack)) {
 									</div>
 								</div>
 								<div class="more-photos-box">
-									<a href="#">
+									<a href="<?php echo home_url('/payment/') ?>">
 										More photos bring more clients.
 										Upgrade to Premium Now!
 									</a>
@@ -362,7 +362,7 @@ if(empty($business_pack)) {
 									<h2>Links</h2>
 									<p>
 										Premium users can add to their business homepage and social media links. 
-										<?php if($business_pack == 'Free' ){ ?><a href="#">Upgrade to Premium Now!</a><?php } ?>
+										<?php if($business_pack == 'Free' ){ ?><a href="<?php echo home_url('/payment/') ?>">Upgrade to Premium Now!</a><?php } ?>
 									</p>
 									<form action="javascript:void(0)">
 										<div class="manage_business_links_row">
@@ -521,7 +521,8 @@ if(empty($business_pack)) {
 									The main benefit is a mandatory benefit, without it your business will not appear in the businesses list. This benefit is to your City card holder only! No other city card holders deserves it. With publishing this benefit you agree to this conditions
 								</p>
 								<?php if( have_rows('benefits', $business[0]->ID) ): ?>
-								<table class="main-benefit">
+                                                            <div class="table-responsive">
+								<table class="main-benefit table">
 										<tr>
 											<th></th>
 											<th>Status</th>
@@ -599,6 +600,7 @@ if(empty($business_pack)) {
 										endwhile; ?>
 									
 								</table>
+                                                            </div>
 								<?php else: ?>
 										<a href="#" class="popmake-add-new-benefit" id="add_benefit">Add Benefit</a>
 								<?php endif; ?>
@@ -608,7 +610,8 @@ if(empty($business_pack)) {
 								?>
 								<div>
 									<h2>Additional Benefits</h2>
-									<table class="additional">
+                                                                    <div class="table-responsive">
+									<table class="additional table">
 										<tr>
 											<th></th>
 											<th>Status</th>
@@ -677,8 +680,15 @@ if(empty($business_pack)) {
 											endwhile;?>
 										<?php endif; ?>
 									</table>
+                                                                    </div>
 									<a href="#" class="popmake-add-benefit" id="add_benefit">Add Benefit</a>
 								</div>
+                                                                                                                                               <?php else: ?>
+   <div class="premium_label_icon">                                                                            
+       <label><h2>Additional Benefit</h2></label>
+       <p>Premium users can add up to 10 additional benefits. Upgrade Now!</p>
+   </div>
+                                                                               
 								<?php endif; ?>
 							</div>
 						</div>
@@ -687,10 +697,10 @@ if(empty($business_pack)) {
 			</div>
 			<div class="accordion" id="a4">
 				<div class="accordion-section">
-					<a class="accordion-section-title <?php if($business_pack == 'Free'){echo "blocked";} ?>" href="" title="4" style="background: #cbc5bd;">
+					<a class="accordion-section-title <?php if($business_pack !== 'Premium'){echo "blocked";} ?>" href="" title="4" style="background: #cbc5bd;">
 						<span style="display: block; color: #fff; position: relative; top: 13px;">Message Your Clients</span>
 					</a>
-					<?php if($business_pack != 'Free' ): ?>
+					<?php if($business_pack === 'Premium' ): ?>
 					<div id="accordion-4" class="accordion-section-content">
 						<div class="accordion-section-padding">
 							<div id="manage_business_benefits">
@@ -698,7 +708,8 @@ if(empty($business_pack)) {
 								<p>
 									Text or somethingText or somethingText or somethingText or somethingText or something 
 								</p>
-								<table>
+                                                            <div class="table-responsive table">
+								<table class="table">
 									<tr>
 										<th></th>
 										<th>Status</th>
@@ -783,7 +794,7 @@ if(empty($business_pack)) {
 													<a href="javascript:void(0)" class="businessTableButton soldOut" rel="<?=$mesId;?>">Sold Out</a>
 												</td>
 											</tr>
-                                                <?php } ?>
+                                                
 											<tr class="drop-down" style="display:none">
 												<td colspan="9">
 													<div class="info clearfix">
@@ -803,11 +814,12 @@ if(empty($business_pack)) {
 													</div>
 												</td>
 											</tr>
-										<?php 
+<?php } ?>										<?php 
 										endwhile;?>
 
 									<?php endif; wp_reset_query(); ?>
 								</table>
+                                                            </div>
 								<a href="#" class="popmake-notification-clients-message-popup" id="add_benefit">Create Message</a>
 							</div>
 						</div>
@@ -817,7 +829,7 @@ if(empty($business_pack)) {
 			</div>
 			<?php if($business_pack == 'Free' ) { ?>
 				<div class="premium">
-					<a href="">Upgrade to Premium Now!</a>
+					<a href="<?php echo home_url('/payment/') ?>">Upgrade to Premium Now!</a>
 				</div>
 			<?php } ?>
 			<script>
@@ -849,49 +861,50 @@ if(empty($business_pack)) {
 							alert("Please enter facebook page before preview");
 					});
 					
-					$("#links_update").click(function(e) {
-						e.preventDefault();
-						var fb = $("#facebook_preview").val();
-						var hp = $("#homepage_preview").val();
-						
-						if(fb.substr(0, 7) != 'http://'&&fb.substr(0, 8) !=  'https://'){
-							fb = "http://"+fb;
-						}
-						if(hp.substr(0, 7) != 'http://'&&hp.substr(0, 8) !=  'https://'){
-							hp = "http://"+hp;
-						}
+        $("#links_update").click(function(e) {
+                e.preventDefault();
+                var fb = $("#facebook_preview").val();
+                var hp = $("#homepage_preview").val();
 
-						if(fb != ''&&fb != 'http://')  {
+                if(fb.substr(0, 7) != 'http://'&&fb.substr(0, 8) !=  'https://'){
+                        fb = "http://"+fb;
+                }
+                if(hp.substr(0, 7) != 'http://'&&hp.substr(0, 8) !=  'https://'){
+                        hp = "http://"+hp;
+                }
 
-							if(!/^(https?:\/\/)?((w{3}\.)?)facebook.com\/.*/i.test(fb)) {
-								alert("Please enter a valid facebook link");
-								return false;
-							}
-						}else{
-							fb = '';
-						}
-						if(hp == ''||hp === 'http://'){
-							hp = '';
-						}
-						
-						if(!fb&&!hp){
-							return false;
-						}
-						
-						$.ajax({
-							url: ajaxurl + "?action=business_links_update",
-							type: 'POST',
-							data: { "fb" : fb, "homepage": hp, "business_id": "<?=$business[0]->ID;?>" },
-							success: function(data) {
-								console.log(data);
-								if(data.success == true)
-									alert("Business links updated!");
-							},
-							error: function(data) {
-								alert("FAILED");
-							}
-						});
-					});
+                if(fb != ''&&fb != 'http://')  {
+                 //   /^(https?:\/\/)?((w{3}\.)?)facebook.com\/.*/i
+                    var regExp = /(?:(?:http|https):\/\/)?(?:www.)?facebook.com\/(?:(?:\w)*#!\/)?(?:pages\/)?(?:[?\w\-]*\/)?(?:profile.php\?id=(?=\d.*))?([\w\-]*)?/;
+                        if(!regExp.test(fb)) {
+                                alert("Please enter a valid facebook link");
+                                return false;
+                        }
+                }else{
+                        fb = '';
+                }
+                if(hp == ''||hp === 'http://'){
+                        hp = '';
+                }
+
+                if(!fb&&!hp){
+                        return false;
+                }
+
+                $.ajax({
+                        url: ajaxurl + "?action=business_links_update",
+                        type: 'POST',
+                        data: { "fb" : fb, "homepage": hp, "business_id": "<?=$business[0]->ID;?>" },
+                        success: function(data) {
+                                console.log(data);
+                                if(data.success == true)
+                                        alert("Business links updated!");
+                        },
+                        error: function(data) {
+                                alert("FAILED");
+                        }
+                });
+        });
 					
 					$("#addOpeningDay").click(function(e) {
 						e.preventDefault();
@@ -1000,7 +1013,7 @@ if(empty($business_pack)) {
 							type: 'POST',
 							data: { "benefitId": benefitId },
 							success: function(result) {
-								console.log(result);
+							
 								if(result.success == true) {
 									if(result.data.business_pack != "Free") {
 										$("#popmake-412 .gform_hidden input[type=hidden]").val(benefitId);

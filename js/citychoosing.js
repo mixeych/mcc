@@ -1,3 +1,4 @@
+
 jQuery(document).ready(function(){
     console.log("city");
     if($("body").hasClass("page-id-7")){
@@ -7,6 +8,9 @@ jQuery(document).ready(function(){
        
     }else{
         $("#popmake-4297").popmake('open'); 
+        setTimeout(function(){
+          $("#popmake-4297").popmake('open'); 
+       }, 300);
     }
 });
 

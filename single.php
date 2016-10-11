@@ -6,7 +6,6 @@
  */
 
 get_header(); ?>
-
 	
 	<div class="container">
 
@@ -17,7 +16,6 @@ get_header(); ?>
 			<main id="main" class="site-main business_page_warp" role="main">
 
 			<?php while ( have_posts() ) : the_post(); ?>
-
 				<?php get_template_part( 'content', 'single' ); ?>
 
 			<?php endwhile; // end of the loop. ?>

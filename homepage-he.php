@@ -7,7 +7,6 @@
 get_header(); 
 global $wpdb;
 ?>
-
 	<div class="container">
 		<div id="sidebar">
 			<?php get_sidebar(); ?>
@@ -126,6 +125,9 @@ global $wpdb;
                   $bizId = get_the_id();
                   $bizTitle = get_the_title();
                   $bCity = get_field('bcity', $bizId);
+                  echo "<pre>";
+                  var_dump($bCity);
+                  echo "</pre>";
                   $city = get_post($bCity);
                   $bCity = $city->post_title;
                   $logo = $logo = get_field("logo", $bizId);

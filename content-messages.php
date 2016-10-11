@@ -7,9 +7,12 @@
  * @package mycitycard
  */
 global $current_user;
+global $sitepress;
+$currentLanguage = $sitepress->get_current_language();
 $mesId = get_the_id();
 $bizId = get_post_meta($mesId, 'business', true);
-$bizName = get_the_title($bizId);
+$iclBizId = icl_object_id($business_id, 'city', true);
+$bizName = get_the_title($iclBizId);
 $bizLink = get_permalink($bizId);
 $image = get_post_meta($mesId, 'message_image', true);
 $imageSrc = wp_get_attachment_image_src($image)[0];
@@ -18,11 +21,21 @@ $status = get_post_meta($mesId, 'status', true);
 $classStatus = ($status == 'expired'||$status=='sold out'||$status=='disabled')?'expired':'';
 $validThru = date('d/m/Y H:i:s', $validThru);
 $target = get_post_meta($mesId, 'target', true);
-$areaText = 'ALL MCC Holders';
+if($currentLanguage != 'he'){
+    $areaText = 'ALL MCC Holders';
+}else{
+    $areaText = ' כל מחזיקי כרטיס MyCityCard';
+}
 if($target == 'Your city card holders'){
 	$cityId = get_post_meta($mesId, 'city', true);
-	$city = get_the_title($cityId);
-	$areaText = $city.' card Holders';
+        $iclCityId = icl_object_id($cityId, 'city', true);
+	$city = get_the_title($iclCityId);
+        if($currentLanguage != 'he'){
+            $areaText = $city.' card Holders';
+        }else{
+            $areaText ='  למחזיקי כרטיס'.$city;
+        }
+	
 }
 $dataUs='regular';
 $user_type = get_user_meta($current_user->ID, 'mcc_user_type', true);

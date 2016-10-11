@@ -1,3 +1,6 @@
+<?php 
+header('Content-Type: text/html; charset=utf-8');
+?>
 <?php
 /**
  * The header for our theme.
@@ -42,7 +45,8 @@ Click to watch $title benefits in $cityName";
 <?php endif; ?>
 <link rel="profile" href="http://gmpg.org/xfn/11">
 <link rel="pingback" href="<?php bloginfo( 'pingback_url' ); ?>">
-
+<link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+<link rel="shortcut icon" type="image/png" href="<?php bloginfo('template_url') ?>/favicon.png"/>
 
 <?php 
 global $sitepress;
@@ -63,7 +67,6 @@ $lang = get_bloginfo('language');
 </head>
 
 <body <?php body_class(); ?>>
-<?php //echo ICL_LANGUAGE_CODE; ?>
 <div id="page" class="hfeed site">
 
 	<header id="masthead" class="site-header" role="banner">
@@ -134,6 +137,7 @@ $lang = get_bloginfo('language');
 		<div id="header-banner">
 			<?php 
 				$header_src;
+                                
 				if(is_tax()){
 					$currTerm = get_queried_object();
 					$taxImg = get_field('cimage', $currTerm->taxonomy.'_'.$currTerm->term_id);
@@ -153,8 +157,14 @@ $lang = get_bloginfo('language');
 			?>
 			<img class="header-banner" src=<?php echo $header_src; ?> >
 			<div class="container">
-
+                            <?php if(isset($_SESSION["my_cityz"])&&$_SESSION["my_cityz"] != 'All'): 
+                                $iclCity = icl_object_id($_SESSION['my_cityz'], 'city', true);
+                                $cityPost = get_post($iclCity);
+                                ?>
+                            <h2 class="site-description"><?php echo $cityPost->post_title; ?></h2>
+                            <?php else: ?>
 				<h2 class="site-description"><?php the_field('slider_headline') ?></h2>
+                            <?php endif; ?>
 				<h3 class="site-subdescription"><?php the_field('slider_sub_headline') ?></h3>
 
 				<?php if (is_page_template('page-business.php')) {
@@ -317,7 +327,7 @@ $lang = get_bloginfo('language');
                         if($cty->ID != $userCity->ID) {
                                 $iclId = icl_object_id($cty->ID, 'city', true, 'en');
                                 if($iclId == $ucity){
-                                        echo '<option selected value='.$iclId.'">'.$cty->post_title.'</option>';
+                                        echo '<option selected="selected" value='.$iclId.'">'.$cty->post_title.'</option>';
                                         $check = true;
                                 }
                                 else{
@@ -369,3 +379,5 @@ $lang = get_bloginfo('language');
 	</header><!-- #masthead -->
 
 	<div id="content" class="site-content">
+<?php /* 15pJQhrPh3XJCUOiaQCa61 */ ?>
+<?php /* yiPHZ6SwDf */ ?><?php /* 1uqjsQSyWVhmOHAEVa1i61 */ ?>

@@ -193,6 +193,7 @@ function mycitycard_scripts() {
 	wp_enqueue_script( 'mycitycard-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20120206', true );
 
 	wp_enqueue_style( 'datetimepickercss', get_template_directory_uri().'/js/datetimepicker-master/jquery.datetimepicker.css' );
+	
 
 
 	wp_enqueue_script( 'mycitycard-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20130115', true );
@@ -465,110 +466,115 @@ function get_businesses_cats( $form ) {
 
     foreach ( $form['fields'] as &$field ) {
         if ( $field->type == 'select' && $field->id == 1) {
-			global $current_user;
-			$args = array(
-				'author' => $current_user->ID,
-				'posts_per_page'   => 5,
-				'offset'           => 0,
-				'category'         => '',
-				'category_name'    => '',
-				'orderby'          => 'date',
-				'order'            => 'DESC',
-				'include'          => '',
-				'exclude'          => '',
-				'meta_key'         => '',
-				'meta_value'       => '',
-				'post_type'        => 'business',
-				'post_mime_type'   => '',
-				'post_parent'      => '',
-				'post_status'      => 'publish',
-				'suppress_filters' => true 
-			);
-			$business = get_posts( $args ); 
-			$business = $business[0];
-			$business_cats = get_the_terms($business->ID, "business_cat");
-			
-			$args = array(
-				'type'                     => 'business',
-				'child_of'                 => 0,
-				'parent'                   => 0,
-				'orderby'                  => 'name',
-				'order'                    => 'ASC',
-				'hide_empty'               => 0,
-				'hierarchical'             => 1,
-				'exclude'                  => '',
-				'include'                  => '',
-				'number'                   => '',
-				'taxonomy'                 => 'business_cat',
-				'pad_counts'               => false 
+            global $current_user;
+            $args = array(
+                'author' => $current_user->ID,
+                'posts_per_page'   => 5,
+                'offset'           => 0,
+                'category'         => '',
+                'category_name'    => '',
+                'orderby'          => 'date',
+                'order'            => 'DESC',
+                'include'          => '',
+                'exclude'          => '',
+                'meta_key'         => '',
+                'meta_value'       => '',
+                'post_type'        => 'business',
+                'post_mime_type'   => '',
+                'post_parent'      => '',
+                'post_status'      => 'publish',
+                'suppress_filters' => true 
+            );
+            $business = get_posts( $args ); 
+            $business = $business[0];
+            $business_cats = get_the_terms($business->ID, "business_cat");
 
-			); 
-			
-			$categories = get_categories($args);
+            $args = array(
+                'type'                     => 'business',
+                'child_of'                 => 0,
+                'parent'                   => 0,
+                'orderby'                  => 'name',
+                'order'                    => 'ASC',
+                'hide_empty'               => 0,
+                'hierarchical'             => 1,
+                'exclude'                  => '',
+                'include'                  => '',
+                'number'                   => '',
+                'taxonomy'                 => 'business_cat',
+                'pad_counts'               => false 
 
-			$field->choices = array();
-			foreach($categories as $post) {
-				$select = '';
-				if($business_cats){
-					foreach($business_cats as $bcat) {
-						if($post->term_id == $bcat->term_id)
-							$select = 1;
-					}
-				}
-				$iclId = icl_object_id($post->term_id, 'business_cat', true, 'en');				
-				$field->choices[] = array( 'text' => $post->name, 'value' => $iclId, 'isSelected' => $select );
-			}
+            ); 
 
-			global $sitepress;
+            $categories = get_categories($args);
 
-			$current_language = $sitepress->get_current_language();
-			if($current_language == "en")
-				$field->placeholder = 'Select a Category';
-			
-			if($current_language == "he")
-				$field->placeholder = 'בחר קטגוריה';
-		}
-		if($field->type == 'select' && ($field->id == 4 || $field->id == 7 || $field->id == 6)){
-			
-			$args = array(
-				'author' => $current_user->ID,
-				'posts_per_page'   => 5,
-				'offset'           => 0,
-				'category'         => '',
-				'category_name'    => '',
-				'orderby'          => 'date',
-				'order'            => 'DESC',
-				'include'          => '',
-				'exclude'          => '',
-				'meta_key'         => '',
-				'meta_value'       => '',
-				'post_type'        => 'business',
-				'post_mime_type'   => '',
-				'post_parent'      => '',
-				'post_status'      => 'publish',
-				'suppress_filters' => true 
-			);
-			$business = get_posts( $args ); 
-			$business = $business[0];
-			$business_cats = get_the_terms($business->ID, "business_cat");
+            $field->choices = array();
+            foreach($categories as $post) {
+                $select = '';
+                if($business_cats){
+                        foreach($business_cats as $bcat) {
+                                if($post->term_id == $bcat->term_id)
+                                        $select = 1;
+                        }
+                }
+                $iclId = icl_object_id($post->term_id, 'business_cat', true, 'en');				
+                $field->choices[] = array( 'text' => $post->name, 'value' => $iclId, 'isSelected' => $select );
+            }
 
-			$parentId = $business_cats[0]->term_id;
-			$args = array(
-				'type'                     => 'business',
-				'orderby'                  => 'name',
-				'order'                    => 'ASC',
-				'hide_empty'               => 0,
-				'taxonomy'                 => 'business_cat',
-				'parent' 					=>	$parentId,
-				'pad_counts'               => false 
+            global $sitepress;
 
-			); 
-			$categories = get_categories($args);
-			$select = 0;
-                        array_splice($field->choices, 1);
-			foreach ($categories as $cat){
-                                
-				if($cat->parent != '0'){
+            $current_language = $sitepress->get_current_language();
+            if($current_language == "en")
+                $field->placeholder = 'Select a Category';
+
+            if($current_language == "he")
+                $field->placeholder = 'בחר קטגוריה';
+    }
+        if($field->type == 'select' && ($field->id == 4 || $field->id == 7 || $field->id == 6)){
+
+            $args = array(
+                'author' => $current_user->ID,
+                'posts_per_page'   => 5,
+                'offset'           => 0,
+                'category'         => '',
+                'category_name'    => '',
+                'orderby'          => 'date',
+                'order'            => 'DESC',
+                'include'          => '',
+                'exclude'          => '',
+                'meta_key'         => '',
+                'meta_value'       => '',
+                'post_type'        => 'business',
+                'post_mime_type'   => '',
+                'post_parent'      => '',
+                'post_status'      => 'publish',
+                'suppress_filters' => true 
+            );
+            $business = get_posts( $args ); 
+            $business = $business[0];
+            $business_cats = get_the_terms($business->ID, "business_cat");
+            $parentId = $business_cats[0]->term_id;
+            foreach($business_cats as $bcat){
+                if($bcat->parent == 0){
+                    $parentId = $bcat->term_id;
+                }
+            }
+            
+            $args = array(
+                'type'                     => 'business',
+                'orderby'                  => 'name',
+                'order'                    => 'ASC',
+                'hide_empty'               => 0,
+                'taxonomy'                 => 'business_cat',
+                'parent' 					=>	$parentId,
+                'pad_counts'               => false 
+
+            ); 
+            $categories = get_categories($args);
+            $select = 0;
+            array_splice($field->choices, 1);
+            foreach ($categories as $cat){
+
+                if($cat->parent != '0'){
 
 //					if($business_cats){
 //						foreach($business_cats as $bcat) {
@@ -580,13 +586,13 @@ function get_businesses_cats( $form ) {
 //						}
 //					}
 
-					$iclId = icl_object_id($cat->term_id, 'business_cat', true, 'en');
-                                        
-					$field->choices[] = array( 'text' => $cat->name, 'value' => $cat->term_id, 'isSelected' => $select );
+                    $iclId = icl_object_id($cat->term_id, 'business_cat', true, 'en');
 
-				}
-			}
-		}
+                    $field->choices[] = array( 'text' => $cat->name, 'value' => $cat->term_id, 'isSelected' => $select );
+
+                }
+            }
+        }
     }
 
     return $form;
@@ -1089,15 +1095,40 @@ function mccChangeVisiblePostsTerm($object_id, $terms, $tt_ids, $taxonomy, $appe
     if($taxonomy != 'business_cat'){
         return;
     }
+    
     $isVisible = get_post_meta($object_id, 'visibility', true);
     if(empty($isVisible)){
         return;
     }
-    foreach($old_tt_ids as $oldTTid){
-        delete_visible_post($object_id, $oldTTid);
+    $args = array(
+        'include' => $old_tt_ids
+    );
+    $oldterms = get_terms('business_cat', $args);
+    foreach($oldterms as $oldTT){
+        $iclId = icl_object_id($oldTT->term_id, 'business_cat', true, 'he');
+        delete_visible_post($object_id, $oldTT->term_id);
+        delete_visible_post($object_id, $iclId);
+        if($oldTT->parent != '0'){
+            delete_visible_post($object_id, $oldTT->parent);
+            delete_visible_post($object_id, $iclId);
+        }
     }
-    foreach($tt_ids as $newTTid){
-        add_visible_post($object_id, $newTTid);
+    $args = array(
+        'include' => $tt_ids
+    );
+    $newterms = get_terms('business_cat', $args);
+    
+    foreach($newterms as $newTT){
+        $iclId = (int)icl_object_id($oldTT->term_id, 'business_cat', true, 'he');
+        add_visible_post($object_id, $newTT->term_id);
+        add_visible_post($object_id, $iclId);
+//        $res = wp_set_object_terms($object_id, $iclId, 'business_cat');
+////        var_dump($res);
+////        die();
+         if($newTT->parent != '0'){
+            add_visible_post($object_id, $newTT->parent);
+            add_visible_post($object_id, $iclId);
+        }
     }
 }
 
@@ -1400,7 +1431,7 @@ function new_post_business_register( $entry, $form ) {
 		$url = 'https://maps.googleapis.com/maps/api/geocode/json?address=';
 		$addArr = explode(' ', $entry[9]);
 		foreach($addArr as $val){
-			$url .= $val.'+';
+                    $url .= $val.'+';
 		}
 		$url .= '&key=AIzaSyAekAAvMNofkQmmU7Az1YThH1TlokfVaxA';
 		$geocode = file_get_contents($url);
@@ -1426,8 +1457,8 @@ function new_post_business_register( $entry, $form ) {
 		$subject = 'Activation Link';
 		$body = home_url().'?activate_hash='.md5($user->data->user_email."_".$user->data->display_name).'&user_id='.$user->ID;
 		$headers = array('Content-Type: text/html; charset=UTF-8');
-
-		wp_mail( $to, $subject, $body, $headers );
+                wp_mail($to, $subject, $body, $headers);
+                
 	} else {
 		echo "Not Contributor";
 	}
@@ -1519,7 +1550,7 @@ function do_on_login($login, $user) {
     if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
         session_start();
     }
-    
+
     if(get_field("active_user", "user_".$user->ID) != 1){
         wp_logout();
         $redirect = '/log-in/?user=notactivated';
@@ -1537,8 +1568,12 @@ function do_on_login($login, $user) {
         }
     }
     $user_ID = $user->ID;
-
-    $_SESSION['my_cityz'] = get_field("field_56680b158ee8c", "user_".$user_ID)->ID;
+    $city = get_field("field_56680b158ee8c", "user_".$user_ID);
+    if(!is_numeric($city)){
+        $city = $city->ID;
+    }
+    $_SESSION['my_cityz'] = $city;
+    
 }
 add_action('wp_login', 'do_on_login', 10, 2);
 
@@ -1550,17 +1585,23 @@ function checkAction(){
     if(!is_user_logged_in()){
         return;
     }
-    if(isset($_SESSION['action'])&&$_SESSION['action'] === 'city not active'){
+//    if($_SERVER['REQUEST_URI'] !== '/'){
+//        return;
+//    }
+    if(isset($_SESSION['action'])&&$_SESSION['action'] === 'city not active'){      
         $_SESSION['action'] = '';
-        add_action('wp_enqueue_scripts', 'enqueue_popup_script');
+//        add_action('wp_enqueue_scripts', 'enqueue_popup_script');
+        wp_enqueue_script('front', get_template_directory_uri() . '/js/checkactivecity.js', array('jquery'), true );
     }
     if(isset($_SESSION['action'])&&$_SESSION['action'] === '!city'){
+        
+         wp_enqueue_script('cityscript', get_template_directory_uri() . '/js/citychoosing.js', array('jquery'), true );
         $_SESSION['action'] = '';
-        add_action('wp_enqueue_scripts', 'enqueue_popup_city');
+        
     }
     return;
 }
-add_action('init', 'checkAction');
+add_action('wp_enqueue_scripts', 'checkAction');
 
 add_action( 'lost_password', 'redirect_to_custom_lostpassword' );
 function redirect_to_custom_lostpassword() {
@@ -2074,6 +2115,7 @@ function cahngeCityDropDown($form){
                 'posts_per_page'   => -1,
                 'order'   => 'ASC',
                 'post_type'        => 'city',
+                'orderby' => 'name',
                 'suppress_filters' => false
             );
             $cities = get_posts( $args ); 
@@ -2239,14 +2281,24 @@ function add_notification_message_popup(){
 		$matches = trim(strip_tags($_POST['matches']));
 		$target = trim(strip_tags($_POST['target']));
 		$meters = trim(strip_tags($_POST['meters']));
+                if(!empty($meters)){
+                    $meters = (int) $meters;
+                    if($meters < 100||$meters > 5000){
+                        echo json_encode(array("success" => false, "message" => "min 100, max 5000 meters"));
+                        die();
+                    }
+                }
 		$startDate = trim(strip_tags($_POST['startDate']));
 		$endDate = trim(strip_tags($_POST['endDate']));
 		$startDate = change_date_to_timestamp($startDate);
 		$city = get_post_meta($business->ID, 'bcity', true);
-		if(!$startDate){
+                $cEndDate = change_date_to_timestamp($endDate);
+		if(!$startDate||!$cEndDate||$cEndDate<$startDate){
                     echo json_encode(array("success" => false, "message" => "bad date format"));
+                    die();
 		}
-
+                $now = time();
+                
 		$endDate = change_date_to_timestamp($endDate);
 		if(!$endDate){
                     echo json_encode(array("success" => false, "message" => "bad date format"));
@@ -2297,8 +2349,18 @@ function add_notification_message_popup(){
                /*
                 * add message to user
                 */
+                
                 $currentTime = time();
                 $monthAgo = $currentTime - 2592000;
+            $newMessagesHave = 0;
+            if($startDate > $currentTime){
+                $args = array(
+                   $post_id,  $business->ID, $target, $amount, $alert_rate_new_benefits, $monthAgo, 
+                );
+                
+                wp_schedule_single_event($startDate, 'MCCsendMessage', $args);
+            }else{
+                
                 if($target == 'Your city card holders'){
                     $city = get_post_meta($business->ID, 'bcity', true);
                     update_post_meta($post_id, 'city', $city);
@@ -2313,10 +2375,10 @@ function add_notification_message_popup(){
                         add_message_to_user($user->user_id, $post_id);
                         $deliveredUsers[] = $user->user_id;
                         if(function_exists('sendPushNotificationsASPN')){
-                            sendPushNotificationsASPN($user->ID);
+                            sendPushNotificationsASPN($user->user_id);
                         }
                         if(function_exists('sendPushNotificarionsAndroid')){
-                            sendPushNotificarionsAndroid($user->ID);
+                            sendPushNotificarionsAndroid($user->user_id);
                         }
                         $MCCMessageTargetedUser--;
                     }
@@ -2387,7 +2449,6 @@ function add_notification_message_popup(){
 
                     );
                     $users = get_users($args);
-                    
                     foreach ($users as $usr){
                         $userLocation = get_user_meta($usr->ID, 'mcc_current_location', true);
 
@@ -2413,6 +2474,7 @@ function add_notification_message_popup(){
                 $messages_have = $messages_have - $amount;
 		$newMessagesHave = $messages_have;
 		update_post_meta($business->ID, 'messages_have', $newMessagesHave);
+            }
                 /*
                  * prepeare output
                  */
@@ -2511,6 +2573,10 @@ function recieve_message(){
 				'key' => 'status',
 				'value' => 'active'
 			),
+                        array(
+                            'key' => 'user_del_'.$current_user->ID,
+                            'compare' => 'NOT EXISTS'
+                        )
 
 		),
 		'showposts' => -1,
@@ -2548,6 +2614,10 @@ function recieve_message(){
 					'key' => 'status',
 					'value' => 'active'
 				),
+                                array(
+                                    'key' => 'user_del_'.$current_user->ID,
+                                    'compare' => 'NOT EXISTS'
+                                )
 			),
 			'showposts' => -1,
 		);
@@ -2563,6 +2633,7 @@ function recieve_message(){
 				$ulat = $arr1[0];
 				$ulng = $arr1[1];
 				$distance = distance($ulat, $ulng, $lat, $lng);
+                                $distance = $distance*1000;
 				$meters = (int) get_post_meta($message->ID, 'meters', true);
 				if($distance <= $meters){
 					add_message_to_user($current_user->ID, $message->ID);
@@ -2586,10 +2657,11 @@ function delete_delivered_message($userId, $messageId){
 
 	$query = "DELETE FROM $wpdb->delivered_messages WHERE rel_id = $rel_id";
 	$res = $wpdb->query($query);
-
+        
 	if(empty($res)){
 		return false;
 	}else{
+            update_post_meta($messageId, 'user_del_'.$userId, '1');
 		return true;
 	}
 }
@@ -2620,6 +2692,11 @@ function check_message_validation(){
 						'value'   => $currentTime,
 						'compare' => '<',
 					),
+                                        array(
+                                            'key' => 'status',
+                                            'value' => 'deleted',
+                                            'compare' => '!=',
+                                        ),
 				),
 		'showposts' => -1,
 	);
@@ -2646,7 +2723,6 @@ function add_message_to_user($userId, $messageId){
 	$res = $wpdb->query( $wpdb->prepare($query, $userId, $messageId) );
 	$query = "INSERT INTO $wpdb->new_messages (user_id, message_id) VALUES (%d, %d)";
 	$res = $wpdb->query( $wpdb->prepare($query, $userId, $messageId) );
-
         $business_id = (int) get_post_meta($messageId, 'business', true);
 //        $bussines_messages_have = (int) get_post_meta($business_id, 'messages_have', true);
 //        $bussines_messages_have++;
@@ -2744,39 +2820,40 @@ function delete_message(){
         $newMessagesHave = false;
 	if($current_user->caps['contributor']||$user_type == 'business'){
 
-        $args = array(
-            'author' => $current_user->ID,
-            'posts_per_page'   => 5,
-            'offset'           => 0,
-            'category'         => '',
-            'category_name'    => '',
-            'orderby'          => 'date',
-            'order'            => 'DESC',
-            'include'          => '',
-            'exclude'          => '',
-            'meta_key'         => '',
-            'meta_value'       => '',
-            'post_type'        => 'business',
-            'post_mime_type'   => '',
-            'post_parent'      => '',
-            'post_status'      => 'publish',
-            'suppress_filters' => true
-        );
-        $business = get_posts( $args );
-        $business = $business[0];
-        
-        $res = update_post_meta($id, 'status', 'deleted');
-        update_post_meta($id, 'undelivered', '0');
-        $wpdb->delete( $wpdb->new_messages, array('message_id' =>  $id) );
-        $messages_have = (int) get_post_meta($business->ID, 'messages_have', true);
-        $amount = (int) get_post_meta($id, 'amount', true);
-        $count_targeted = (int) get_post_meta($id, 'count_targeted', true);
+            $args = array(
+                'author' => $current_user->ID,
+                'posts_per_page'   => 5,
+                'offset'           => 0,
+                'category'         => '',
+                'category_name'    => '',
+                'orderby'          => 'date',
+                'order'            => 'DESC',
+                'include'          => '',
+                'exclude'          => '',
+                'meta_key'         => '',
+                'meta_value'       => '',
+                'post_type'        => 'business',
+                'post_mime_type'   => '',
+                'post_parent'      => '',
+                'post_status'      => 'publish',
+                'suppress_filters' => true
+            );
+            $business = get_posts( $args );
+            $business = $business[0];
 
-        $newMessagesHave = $messages_have + ($amount - $count_targeted);
-        update_post_meta($business->ID, 'messages_have', $newMessagesHave);
+            $res = update_post_meta($id, 'status', 'deleted');
+            update_post_meta($id, 'undelivered', '0');
+            $wpdb->delete( $wpdb->new_messages, array('message_id' =>  $id) );
+            $messages_have = (int) get_post_meta($business->ID, 'messages_have', true);
+            $amount = (int) get_post_meta($id, 'amount', true);
+            $count_targeted = (int) get_post_meta($id, 'count_targeted', true);
+
+            $newMessagesHave = $messages_have + ($amount - $count_targeted);
+            update_post_meta($business->ID, 'messages_have', $newMessagesHave);
 
 	}else{
-		$res = delete_delivered_message($current_user->ID, $id);
+            $res = delete_delivered_message($current_user->ID, $id);
+            
 	}
 	if(!$res){
 		echo json_encode(array("success" => false));die();
@@ -2957,9 +3034,9 @@ function side_categories() {
 	$catsHTML = '';
 	foreach($categories as $category) {
 		$subCatsHTML = '';
-		$subArgs = array('type' => 'business', 'parent' => $category->term_id, 'taxonomy' => 'business_cat', 'hide_empty' => 1, 'orderby' => 'name', 'order' => 'ASC');
+		$subArgs = array('type' => 'business', 'parent' => $category->term_id, 'taxonomy' => 'business_cat', 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC');
 		$subCats = get_categories($subArgs);
-
+                
 		$thisCat = $current_tax == $category->name?"selected_cat":"";
 		$iclId = (int) icl_object_id($category->term_id, 'business_cat', true, 'en');
 		if(isset($_SESSION["my_cityz"]) && $_SESSION["my_cityz"] != 'All'){
@@ -3011,7 +3088,7 @@ function side_categories() {
                                 if(!empty($thisSCat)){
                                     $selectedSubCat = true;
                                 }
-				$siclId = icl_object_id($sCat->term_id, 'business_cat', true, 'en');
+				
 				if(isset($_SESSION["my_cityz"]) && $_SESSION["my_cityz"] != 'All'){
 					$siclId = (int) icl_object_id($sCat->term_id, 'business_cat', true, 'en');
 					$args = array(
@@ -3034,9 +3111,11 @@ function side_categories() {
 								'value'   => "1",
 							),
 						),
-						'showposts' => -1
+						'showposts' => -1,
+                                                'suppress_filters' => false
 					);
 				}else{
+                                    $siclId = (int) icl_object_id($sCat->term_id, 'business_cat', true, 'en');
 					$args = array(
 						'post_type' => 'business',
 						'tax_query' => array(
@@ -3048,17 +3127,18 @@ function side_categories() {
 						),
 						'meta_key' => 'visibility',
 						'meta_value' => '1',
-						'showposts' => -1
+						'showposts' => -1,
+                                                'suppress_filters' => false
 					);
 				}
 				$b = new WP_Query($args);
 				$countSub = $b->found_posts;
-				
 				$subCatsHTML .= '<li class="'.$thisSCat.'"><a href="' .get_term_link($sCat). '"> - ' .$sCat->name. ' ('.$countSub.')</a></li>';
 			}
 			$term_id = (int) $iclId;
 			$link = get_term_link($term_id, 'business_cat');
 			$subCatsHTML .= '</ul>';
+
 			if($countSub == 0||(!$selectedSubCat&&$category->name != $current_tax)){
 				$subCatsHTML = '';
 			}
@@ -3346,11 +3426,12 @@ function new_post_customer_register( $entry, $form ) {
 	$user = get_user_by_email( $entry['6'] );
 	$to = $entry['6'];
 	$subject = 'Activation Link';
-	$body = 'http://mycitycard.info/?activate_hash='.md5($user->data->user_email."_".$user->data->display_name).'&user_id='.$user->ID;
+	$body = home_url().'?activate_hash='.md5($user->data->user_email."_".$user->data->display_name).'&user_id='.$user->ID;
 	$headers = array('Content-Type: text/html; charset=UTF-8');
 	$car_nummber = generate_card_number();
 	update_user_meta($user->ID, 'card', $car_nummber);
-	wp_mail( $to, $subject, $body, $headers );
+        wp_mail($to, $subject, $body, $headers);
+	
 }
 
 add_action( 'user_register', 'addcardNumber', 10, 1 );
@@ -3388,7 +3469,7 @@ function get_current_user_role() {
 }
 
 function checkIfActivateLink() {
-	header('Content-Type: text/html; charset=utf-8');
+//	header('Content-Type: text/html; charset=utf-8');
 	if(isset($_GET["activate_hash"]) && isset($_GET["user_id"])) {
 		$user = get_user_by("id", $_GET["user_id"]);
 		
@@ -3645,23 +3726,23 @@ function custom_delete_term_meta($id){
 
 
 function add_visible_post($post_id, $term_id){
-	global $wpdb;
-	$term_id = (int) $term_id;
-	$post_id = (int) $post_id;
-	$query = "SELECT rel_id FROM ".TABLE_TERMVISPOST_RELATIONSHIP."
-				WHERE term_id=$term_id
-				AND post_id=$post_id";
-	$rel = $wpdb->get_var($query);
-	if(!empty($rel)){
-		return false;
-	}
-	$query = "INSERT INTO ".TABLE_TERMVISPOST_RELATIONSHIP." (term_id, post_id)
-				VALUES ($term_id, $post_id)";
-	$res = $wpdb->query($query);
-	$visPosts = (int) custom_get_term_meta($term_id, 'visible_posts');
-	$visPosts++;
-	custom_update_term_meta($term_id, 'visible_posts', $visPosts);
-	return $res;
+    global $wpdb;
+    $term_id = (int) $term_id;
+    $post_id = (int) $post_id;
+    $query = "SELECT rel_id FROM ".TABLE_TERMVISPOST_RELATIONSHIP."
+                            WHERE term_id=$term_id
+                            AND post_id=$post_id";
+    $rel = $wpdb->get_var($query);
+    if(!empty($rel)){
+            return false;
+    }
+    $query = "INSERT INTO ".TABLE_TERMVISPOST_RELATIONSHIP." (term_id, post_id)
+                            VALUES ($term_id, $post_id)";
+    $res = $wpdb->query($query);
+    $visPosts = (int) custom_get_term_meta($term_id, 'visible_posts');
+    $visPosts++;
+    custom_update_term_meta($term_id, 'visible_posts', $visPosts);
+    return $res;
 }
 
 /**
@@ -3717,15 +3798,15 @@ add_action('delete_business_cat', 'delete_business_meta');
 */
 
 function get_categories_by_visible_bus(){
-	global $wpdb;
-	global $sitepress;
-	$currentLan = $sitepress->get_current_language();
-	$query = "SELECT tax.term_id, tax.name, tax.slug FROM $wpdb->terms AS tax LEFT OUTER JOIN $wpdb->termmeta AS meta ON  (tax.term_id=meta.term_id) INNER JOIN {$wpdb->prefix}icl_translations AS trans ON (trans.element_id = tax.term_id) INNER JOIN $wpdb->term_taxonomy AS tt ON (tt.term_id = tax.term_id)
-				WHERE trans.language_code = '$currentLan'
-				AND trans.element_type = 'tax_business_cat'
-				AND tt.parent = 0
-				ORdER BY meta.meta_value DESC";
-	return $wpdb->get_results($query);
+    global $wpdb;
+    global $sitepress;
+    $currentLan = $sitepress->get_current_language();
+    $query = "SELECT tax.term_id, tax.name, tax.slug FROM $wpdb->terms AS tax LEFT OUTER JOIN $wpdb->termmeta AS meta ON  (tax.term_id=meta.term_id) INNER JOIN {$wpdb->prefix}icl_translations AS trans ON (trans.element_id = tax.term_id) INNER JOIN $wpdb->term_taxonomy AS tt ON (tt.term_id = tax.term_id)
+                            WHERE trans.language_code = '$currentLan'
+                            AND trans.element_type = 'tax_business_cat'
+                            AND tt.parent = 0
+                            ORdER BY meta.meta_value DESC";
+    return $wpdb->get_results($query);
 }
 
 function get_categories_with_visible_bizs(){
@@ -3735,11 +3816,30 @@ function get_categories_with_visible_bizs(){
 	if(isset($_SESSION["my_cityz"]) && $_SESSION["my_cityz"] != 'All'){
 		$city = $_SESSION["my_cityz"];
 	}
-
+        $orderby = get_option('categories_order');
+        if($orderby){
+            $orderby = $orderby['input'];
+        }
 	//$currentLan = $sitepress->get_current_language();
 	if(!empty($city)){
-
-		$query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
+            switch($orderby){
+                case 'count':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
+					WHERE tax.term_id=meta.term_id
+                                        AND tt.term_id = tax.term_id 
+                                        AND tt.parent = 0
+					AND trans.element_id = tax.term_id
+					AND trans.language_code = 'en'
+					AND trans.element_type = 'tax_business_cat'
+					AND rel.term_taxonomy_id = tax.term_id
+					AND meta.meta_value <> 0
+					AND rel.object_id IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key='bcity' AND meta_value='$city')
+				ORdER BY tt.count DESC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'visible':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
 					WHERE tax.term_id=meta.term_id
                                         AND tt.term_id = tax.term_id 
                                         AND tt.parent = 0
@@ -3750,8 +3850,118 @@ function get_categories_with_visible_bizs(){
 					AND meta.meta_value <> 0
 					AND rel.object_id IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key='bcity' AND meta_value='$city')
 				ORdER BY meta.meta_value DESC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'ID':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
+					WHERE tax.term_id=meta.term_id
+                                        AND tt.term_id = tax.term_id 
+                                        AND tt.parent = 0
+					AND trans.element_id = tax.term_id
+					AND trans.language_code = 'en'
+					AND trans.element_type = 'tax_business_cat'
+					AND rel.term_taxonomy_id = tax.term_id
+					AND meta.meta_value <> 0
+					AND rel.object_id IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key='bcity' AND meta_value='$city')
+				ORdER BY tax.term_id ASC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'name':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
+					WHERE tax.term_id=meta.term_id
+                                        AND tt.term_id = tax.term_id 
+                                        AND tt.parent = 0
+					AND trans.element_id = tax.term_id
+					AND trans.language_code = 'en'
+					AND trans.element_type = 'tax_business_cat'
+					AND rel.term_taxonomy_id = tax.term_id
+					AND meta.meta_value <> 0
+					AND rel.object_id IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key='bcity' AND meta_value='$city')
+				ORdER BY tax.name ASC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'yaron':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans,  $wpdb->term_relationships AS rel, $wpdb->term_taxonomy AS tt
+					WHERE tax.term_id=meta.term_id
+                                        AND tt.term_id = tax.term_id 
+                                        AND tt.parent = 0
+					AND trans.element_id = tax.term_id
+					AND trans.language_code = 'en'
+					AND trans.element_type = 'tax_business_cat'
+					AND rel.term_taxonomy_id = tax.term_id
+					AND meta.meta_value <> 0
+					AND rel.object_id IN (SELECT post_id FROM $wpdb->postmeta WHERE meta_key='bcity' AND meta_value='$city')
+				ORdER BY tax.name ASC";
+                    $precategories = $wpdb->get_results($query);
+                    $categories = array();
+                    $i = 18;
+                    foreach($precategories as $category){
+                        $catEnId = $iclId = (int) icl_object_id($category->term_id, 'business_cat', true, 'en');
+			switch($catEnId){
+				case 137: $categories[0] = $category;
+					break;
+				case 141: $categories[1] = $category;
+					break;
+				case 145: $categories[2] = $category;
+					break;
+				case 149: $categories[3] = $category;
+					break;
+				case 153: $categories[4] = $category;
+					break;
+				case 157: $categories[5] = $category;
+					break;
+				case 161: $categories[6] = $category;
+					break;
+				case 165: $categories[7] = $category;
+					break;
+				case 169: $categories[8] = $category;
+					break;
+				case 173: $categories[9] = $category;
+					break;
+				case 177: $categories[10] = $category;
+					break;
+				case 181: $categories[11] = $category;
+					break;
+				case 185: $categories[12] = $category;
+					break;
+				case 189: $categories[13] = $category;
+					break;
+				case 193: $categories[14] = $category;
+					break;
+				case 197: $categories[15] = $category;
+					break;
+				case 201: $categories[16] = $category;
+					break;
+				case 205: $categories[100] = $category;
+					break;
+				default: $categories[$i] = $category; $i++;
+					break;
+			}
+		}
+		ksort($categories);
+                return $categories;
+                break;
+            }
 	}else{
-		$query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
+            switch($orderby){
+                case 'count':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
+				WHERE tax.term_id=meta.term_id
+                                AND tt.term_id = tax.term_id 
+                                AND tt.parent = 0
+				AND trans.element_id = tax.term_id
+				AND trans.language_code = 'en'
+				AND trans.element_type = 'tax_business_cat'
+				AND meta.meta_value <> 0
+				ORdER BY tt.count DESC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'visible':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
 				WHERE tax.term_id=meta.term_id
                                 AND tt.term_id = tax.term_id 
                                 AND tt.parent = 0
@@ -3760,10 +3970,97 @@ function get_categories_with_visible_bizs(){
 				AND trans.element_type = 'tax_business_cat'
 				AND meta.meta_value <> 0
 				ORdER BY meta.meta_value DESC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'ID':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
+				WHERE tax.term_id=meta.term_id
+                                AND tt.term_id = tax.term_id 
+                                AND tt.parent = 0
+				AND trans.element_id = tax.term_id
+				AND trans.language_code = 'en'
+				AND trans.element_type = 'tax_business_cat'
+				AND meta.meta_value <> 0
+				ORdER BY tax.term_id ASC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'name':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
+				WHERE tax.term_id=meta.term_id
+                                AND tt.term_id = tax.term_id 
+                                AND tt.parent = 0
+				AND trans.element_id = tax.term_id
+				AND trans.language_code = 'en'
+				AND trans.element_type = 'tax_business_cat'
+				AND meta.meta_value <> 0
+				ORdER BY tax.name ASC";
+                    $res = $wpdb->get_results($query);
+                    return $res;
+                break;
+                case 'yaron':
+                    $query = "SELECT DISTINCT tax.term_id, tax.name FROM $wpdb->terms AS tax, $wpdb->termmeta AS meta, {$wpdb->prefix}icl_translations AS trans, $wpdb->term_taxonomy AS tt
+				WHERE tax.term_id=meta.term_id
+                                AND tt.term_id = tax.term_id 
+                                AND tt.parent = 0
+				AND trans.element_id = tax.term_id
+				AND trans.language_code = 'en'
+				AND trans.element_type = 'tax_business_cat'
+				AND meta.meta_value <> 0
+				ORdER BY tax.term_id ASC";
+                    $precategories = $wpdb->get_results($query);
+                    $categories = array();
+                    $i = 18;
+                    foreach($precategories as $category){
+                        $catEnId = $iclId = (int) icl_object_id($category->term_id, 'business_cat', true, 'en');
+			switch($catEnId){
+				case 137: $categories[0] = $category;
+					break;
+				case 141: $categories[1] = $category;
+					break;
+				case 145: $categories[2] = $category;
+					break;
+				case 149: $categories[3] = $category;
+					break;
+				case 153: $categories[4] = $category;
+					break;
+				case 157: $categories[5] = $category;
+					break;
+				case 161: $categories[6] = $category;
+					break;
+				case 165: $categories[7] = $category;
+					break;
+				case 169: $categories[8] = $category;
+					break;
+				case 173: $categories[9] = $category;
+					break;
+				case 177: $categories[10] = $category;
+					break;
+				case 181: $categories[11] = $category;
+					break;
+				case 185: $categories[12] = $category;
+					break;
+				case 189: $categories[13] = $category;
+					break;
+				case 193: $categories[14] = $category;
+					break;
+				case 197: $categories[15] = $category;
+					break;
+				case 201: $categories[16] = $category;
+					break;
+				case 205: $categories[100] = $category;
+					break;
+				default: $categories[$i] = $category; $i++;
+					break;
+			}
+		}
+		ksort($categories);
+                return $categories;
+                break;
+            }
 	}
-	$res = $wpdb->get_results($query);
-
-	return $res;
+	
 }
 
 
@@ -3778,7 +4075,9 @@ add_action('wp_ajax_getFavBenefits', 'get_fav_benefits');
 function get_fav_benefits(){
 	global $current_user;
 	global $wpdb;
-
+        global $sitepress;
+        $currentLanguage = $sitepress->get_current_language();
+        
 	$query = "SELECT * FROM $wpdb->ben_favorites WHERE user_id = $current_user->ID";
 	$res = $wpdb->get_results( $query );
 	if(!is_array($res)){
@@ -3803,6 +4102,11 @@ function get_fav_benefits(){
 						$validThru = get_sub_field("benefit_type") == "Additional"?"Valid through ".get_sub_field('benefit_expiration'):"";
 						$bCity = get_field("bcity", $business_id);
 						$areaText = get_sub_field('area');
+                                                if($areaText !='All MCC Holders'&&$currentLanguage == 'he'){
+                                                    $heCityId = icl_object_id($bCity, 'city', true);
+                                                    $heCity = get_post($heCityId);
+                                                    $areaText =' למחזיקי כרטיס'.$heCity->post_title;
+                                                }
 
 						$bUrl = get_bloginfo('template_directory');
 						echo <<<html
@@ -4080,24 +4384,24 @@ function edit_main_benefit(){
 }
 
 
-add_action('set_object_terms', 'change_term_visible_posts', 10, 6);
-function change_term_visible_posts($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids){
-	if($taxonomy == 'business_cat'){
-		$vis = get_post_meta($object_id, 'visibility', true);
-		if($vis == '1'){
-			if(is_array($old_tt_ids)){
-				foreach($old_tt_ids as $old_tt_id){
-					delete_visible_post($object_id, $old_tt_id);
-				}
-			}
-			if(is_array($tt_ids)){
-				foreach($tt_ids as $tt_id){
-					add_visible_post($object_id, $tt_id);
-				}
-			}
-		}
-	}
-}
+//add_action('set_object_terms', 'change_term_visible_posts', 10, 6);
+//function change_term_visible_posts($object_id, $terms, $tt_ids, $taxonomy, $append, $old_tt_ids){
+//    if($taxonomy == 'business_cat'){
+//        $vis = get_post_meta($object_id, 'visibility', true);
+//        if($vis == '1'){
+//            if(is_array($old_tt_ids)){
+//                foreach($old_tt_ids as $old_tt_id){
+//                    delete_visible_post($object_id, $old_tt_id);
+//                }
+//            }
+//            if(is_array($tt_ids)){
+//                foreach($tt_ids as $tt_id){
+//                    add_visible_post($object_id, $tt_id);
+//                }
+//            }
+//        }
+//    }
+//}
 
 
 /**
@@ -4147,7 +4451,8 @@ function resendVerificationLink(){
     $subject = 'Activation Link';
     $body = 'http://mycitycard.info/?activate_hash='.md5($user->data->user_email."_".$user->data->display_name).'&user_id='.$user->ID;
     $headers = array('Content-Type: text/html; charset=UTF-8');
-    wp_mail( $to, $subject, $body, $headers );
+    wp_mail($to, $subject, $body, $headers);
+    
     echo json_encode(array("success" => true));
     die();
 }
@@ -4201,8 +4506,8 @@ function addUserLoginTime( $user_login, $user ) {
 }
 add_action('wp_login', 'addUserLoginTime', 10, 2);
 
-add_action('wp', 'checkPaymentDate');
-function checkPaymentDate(){
+add_action('sendRecurringPayment', 'checkPaymentDate', 10, 1);
+function checkPaymentDate($userId){
     if (defined('DOING_AJAX') && DOING_AJAX) {
         return;
     }
@@ -4210,7 +4515,10 @@ function checkPaymentDate(){
     if(is_page(4566)){
         return;
     }
-    global $current_user;
+    if(!$userId){
+        return;
+    }
+    $current_user = get_user_by('id', $userId);
     if(in_array('subscriber', $current_user->roles)){
         return;
     }
@@ -4247,8 +4555,7 @@ function checkPaymentDate(){
             $tranzillaInfo = array();
             update_user_meta($current_user->ID, 'tranzillaInfo', '');
             update_field("business_pack", "Free", $business->ID);
-            wp_redirect(home_url('/payment/'));
-            die();
+            return;
         }
         $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
         $mesHave = $mesHave+1500;
@@ -4259,9 +4566,9 @@ function checkPaymentDate(){
         update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
         return;
     }
-    $url = get_permalink(4566);
-    wp_redirect($url);
-    die();
+    $tranz = new MCCTranzillaPayment();
+    $res = $tranz->sendRecurringPayment($current_user);
+    return;
 }
 
 add_action('wp_ajax_stopPaying', 'MCCTranzillaStopPaying');
@@ -4322,6 +4629,7 @@ function removeCreditCard(){
     $tranzillaInfo['expmonth'] = '';
     $tranzillaInfo['expyear'] = '';
     $tranzillaInfo['cardNumber'] = '';
+    $tranzillaInfo['stopPaying'] = true;
     $ser = serialize($tranzillaInfo);
     $res = update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
     if($res){
@@ -4330,4 +4638,168 @@ function removeCreditCard(){
     }
     echo json_encode(array('success' => false));
     die();
+}
+
+function MCCcronSendMessage($post_id,  $businessID, $target, $amount, $alert_rate_new_benefits, $monthAgo){
+    global $wpdb;
+    $messages_have = (int) get_post_meta($businessID, 'messages_have', true);
+    if($messages_have < 1){
+        return;
+    }
+    if($target == 'Your city card holders'){
+        $city = get_post_meta($businessID, 'bcity', true);
+        update_post_meta($post_id, 'city', $city);
+        /*
+         * get users that added biz to favorite
+         */
+        $MCCMessageTargetedUser = $amount;
+        $query = "SELECT fav.user_id FROM {$wpdb->biz_favorites} AS fav, {$wpdb->usermeta} AS meta WHERE fav.user_id = meta.user_id AND meta.meta_key = 'city' AND meta.meta_value = '$city' AND business_id = $business->ID LIMIT $MCCMessageTargetedUser";
+        $favUsers = $wpdb->get_results($query);
+        $deliveredUsers = array();
+        foreach($favUsers as $user){
+            add_message_to_user($user->user_id, $post_id);
+            $deliveredUsers[] = $user->user_id;
+            if(function_exists('sendPushNotificationsASPN')){
+                sendPushNotificationsASPN($user->user_id);
+            }
+            if(function_exists('sendPushNotificarionsAndroid')){
+                sendPushNotificarionsAndroid($user->user_id);
+            }
+            $messages_have--;
+            
+            $MCCMessageTargetedUser--;
+            if($messages_have < 1){
+                update_post_meta($businessID, 'messages_have', $messages_have);
+                return;
+            }
+        }
+        if($MCCMessageTargetedUser > 0){
+            $args = array(
+                'role' => 'subscriber',
+                'meta_query' => array(
+                    array(
+                            'key' => 'alert_rate_new_benefits',
+                            'value' => $alert_rate_new_benefits,
+                            'compare' => 'IN',
+                    ),
+                    array(
+                        'key' => 'city',
+                        'value' => $city
+                    ),
+                    array(
+                        'key' => 'loginTime',
+                        'value' => $monthAgo,
+                        'type'    => 'numeric',
+                        'compare' => '>=',
+                    ),
+                ),
+                'exclude' => $deliveredUsers,
+                'showposts' => $MCCMessageTargetedUser,
+                'meta_key' => 'loginTime',
+                'orderby'  => 'meta_value_num',
+            );
+            $users = get_users($args);
+            foreach($users as $user){
+                add_message_to_user($user->ID, $post_id);
+                if(function_exists('sendPushNotificationsASPN')){
+                    sendPushNotificationsASPN($user->ID);
+                }
+                if(function_exists('sendPushNotificarionsAndroid')){
+                    sendPushNotificarionsAndroid($user->ID);
+                }
+                $messages_have--;
+                if($messages_have < 1){
+                    update_post_meta($businessID, 'messages_have', $messages_have);
+                    return;
+                }
+            }
+        }
+    }else{
+        $lat = get_post_meta($businessID, 'lat', true);
+        $lon = get_post_meta($businessID, 'lon', true);
+        $latlng = $lat.','.$lon;
+        $args = array(
+            'role' => 'subscriber',
+            'meta_query' => array(
+                'relation' => 'AND',
+                array(
+                        'key' => 'alert_rate_new_benefits',
+                        'value' => $alert_rate_new_benefits,
+                        'compare' => 'IN',
+                ),
+                array(
+                    'key' => 'mcc_current_location',
+                    'value' => '',
+                    'compare' => '!='
+                ),
+                array(
+                    'key' => 'loginTime',
+                    'value' => $monthAgo,
+                    'type'    => 'numeric',
+                    'compare' => '>=',
+                ),
+            ),
+            'meta_key' => 'loginTime',
+            'orderby'  => 'meta_value_num',
+            'showposts' => $amount
+
+        );
+        $users = get_users($args);
+
+        foreach ($users as $usr){
+            $userLocation = get_user_meta($usr->ID, 'mcc_current_location', true);
+
+            $arr1 = explode(',', $userLocation);
+            $ulat = $arr1[0];
+            $ulng = $arr1[1];
+            $distance = distance($ulat, $ulng, $lat, $lon);
+
+            $distance = $distance * 1000;
+            if($distance <= $meters){
+                add_message_to_user($usr->ID, $post_id);
+                    if(function_exists('sendPushNotificationsASPN')){
+                    sendPushNotificationsASPN($usr->ID);
+                }
+                if(function_exists('sendPushNotificarionsAndroid')){
+                    sendPushNotificarionsAndroid($usr->ID);
+                }
+                $messages_have--;
+                if($messages_have < 1){
+                    update_post_meta($businessID, 'messages_have', $messages_have);
+                    return;
+                }
+            }
+        }
+        update_post_meta($post_id, 'location', $latlng);
+
+    }
+    update_post_meta($businessID, 'messages_have', $messages_have);
+    return;
+}
+
+add_action('MCCsendMessage', 'MCCcronSendMessage', 10, 6);
+
+add_filter('wp_nav_menu_objects', 'filterHeaderMenu', 10, 2);
+function filterHeaderMenu($items, $args){
+    $iclId = (int) icl_object_id($args->menu->term_id, 'nav_menu', true, 'en');
+    if($iclId !== 269){
+        return $items;
+    }
+    global $current_user;
+    $business_pack = get_field("business_pack", $business[0]->ID);
+    if(!isset($current_user->caps['subscriber'])){
+        return $items;
+    }
+    $key = 0;
+    $itemId = 4716;
+    if(ICL_LANGUAGE_CODE == 'he'){
+        $itemId = 4717;
+    }
+    foreach($items as $ikey => $item){
+        if($item->ID === $itemId){
+            $key = $ikey;
+        }
+    }
+    unset($items[$key]);
+    return $items;
 }

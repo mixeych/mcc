@@ -118,9 +118,9 @@ if(!$current_user->caps['contributor']&&$user_type != 'business'){
 	</div><!-- #primary -->
 </div>
 <?php
-			if ( is_active_sidebar( 'ads-widgets' ) ) { ?>
+if ( is_active_sidebar( 'ads-widgets' ) ) { ?>
 			<div id="ads">
 				<?php dynamic_sidebar( 'ads-widgets' ); ?>
 			</div>
-		<?php } ?>
+<?php } ?>
 <?php get_footer(); ?>

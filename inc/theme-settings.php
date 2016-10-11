@@ -90,19 +90,20 @@ function add_download_setting(){
     register_setting( 'theme_setting', 'twitter_link' );
     register_setting( 'theme_setting', 'contact_email' );
     register_setting('tranzilla_settings', 'tranzilla_terminal_name');
-    register_setting('tranzilla_settings', 'tranzilla_password');
     register_setting('tranzilla_settings', 'token_password');
     register_setting('tranzilla_settings', 'token_login');
+    register_setting('tranzilla_settings', 'basic_price');
+    register_setting('tranzilla_settings', 'premium_price');
+    register_setting('tranzilla_settings', 'pay_for_year_price');
+    register_setting('tranzilla_settings', 'basic_to_premium');
+    register_setting('tranzilla_settings', 'basic_to_premium_year');
+    register_setting('tranzilla_settings', '1000_messages');
+    register_setting('tranzilla_settings', '2000_messages');
+    register_setting('tranzilla_settings', '5000_messages');
+    register_setting('tranzilla_settings', '10000_messages');
     add_settings_section( 'theme_options', 'Theme options', '', 'theme-options' );
     add_settings_section( 'contact-links', 'Contact Links', '', 'theme-options' );
     add_settings_section( 'tranzilla_sections', 'Tranzilla Settings', '', 'tranzilla-options' );
-    add_settings_field(
-        'tranzilla_password',
-        'Password',
-        'tranzilla_password_callback',
-        'tranzilla-options', // page
-        'tranzilla_sections' // section
-    );
     
     add_settings_field(
         'tranzilla_terminal_name',
@@ -122,6 +123,69 @@ function add_download_setting(){
         'token_password',
         'Token password',
         'token_password_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'basic_price',
+        'Basic price',
+        'basic_price_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'premium_price',
+        'Premium price',
+        'premium_price_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'pay_for_year_price',
+        'Pay for year premium price',
+        'pay_for_year_price_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'basic_to_premium',
+        'From basic to premium price',
+        'basic_to_premium_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        'basic_to_premium_year',
+        'From basic to premium for year price',
+        'basic_to_premium_year_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        '1000_messages',
+        '1000 messages price',
+        't1_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        '2000_messages',
+        '2000 messages price',
+        't2_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        '5000_messages',
+        '5000 messages price',
+        't5_callback',
+        'tranzilla-options', // page
+        'tranzilla_sections' // section
+    );
+    add_settings_field(
+        '10000_messages',
+        '10000 messages price',
+        't10_callback',
         'tranzilla-options', // page
         'tranzilla_sections' // section
     );
@@ -175,6 +239,105 @@ function categories_order_callback(){
     <?php
 }
 
+function basic_price_callback(){
+    
+    $val = get_option('basic_price');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="basic_price[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function t1_callback(){
+    
+    $val = get_option('1000_messages');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="1000_messages[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function t2_callback(){
+    
+    $val = get_option('2000_messages');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="2000_messages[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function t5_callback(){
+    
+    $val = get_option('5000_messages');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="5000_messages[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function t10_callback(){
+    
+    $val = get_option('10000_messages');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="10000_messages[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function basic_to_premium_year_callback(){
+    
+    $val = get_option('basic_to_premium_year');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="basic_to_premium_year[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function basic_to_premium_callback(){
+    
+    $val = get_option('basic_to_premium');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="basic_to_premium[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function pay_for_year_price_callback(){
+    
+    $val = get_option('pay_for_year_price');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="pay_for_year_price[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
+function premium_price_callback(){
+    
+    $val = get_option('premium_price');
+    if($val){
+        $val = $val['input'];
+    }
+    ?>
+    
+    <input name="premium_price[input]" type="number" value="<?php echo $val ?>" />
+    <?php
+}
 function facebook_link_callback(){
     
     $val = get_option('facebook_link');

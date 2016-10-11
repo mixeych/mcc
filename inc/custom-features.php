@@ -103,7 +103,8 @@ function addRoleCountryCityManager() {
                 'read_private_pages' => true,
                 'delete_users' => true,
                 'create_users' => true,
-                // [unfiltered_upload] => 
+                'upload_files' => true,
+                'unfiltered_upload' => true,
                 // [edit_dashboard] => 1
                 // [update_plugins] => 1
                 // [delete_plugins] => 1
@@ -229,6 +230,8 @@ function addRoleCountryCityManager() {
                 'edit_others_businesses' => true,
     		);
 		add_role('test_role', 'Test role', $test_roleCaps );
+    }else{
+        //remove_role( 'test_role' );
     }
 
 

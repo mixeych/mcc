@@ -127,7 +127,7 @@ if(empty($isActive)){
 				<div id="accordion-1" class="accordion-section-content" data-bizrole="<?=$business_role ?>">
 					<div class="accordion-section-padding">
 						<?php echo do_shortcode("[gravityform id=2 title=false description=false ajax=true field_values='business_name={$business[0]->post_title}&ltd={$ltd}&first_name={$first_name}&last_name={$last_name}&phone={$phone}&address={$address}&email={$email}&business_role={$business_role}&business_phone={$phone}&business_phone_2={$business_phone_2}&short_desc={$short_desc}']"); ?>
-						<label class="main-logo" data-logo="<?php if(!empty($logo)){ echo "1"; }else{ echo "0"; } ?>" >Logo<input type="file" ></label>
+						<label class="main-logo" data-logo="<?php if(!empty($logo)){ echo "1"; }else{ echo "0"; } ?>" >לוגו<input type="file" ></label>
 						<a href="<?php echo get_permalink($business[0]->ID); ?>" target="_blank" id="preview_business_page">צפה בדף העסק</a>
 						<?php 
 								$cityId = get_user_meta($current_user->ID, 'city', true);
@@ -355,7 +355,7 @@ if(empty($isActive)){
 									</div>
 								</div>
 								<div class="more-photos-box">
-									<a href="">
+									<a href="<?php echo home_url('/payment/') ?>">
 										More photos bring more clients.
 										Upgrade to Premium Now!
 									</a>
@@ -466,7 +466,7 @@ if(empty($isActive)){
 							<option value="23:00">23:00</option>
 							<option value="24:00">24:00</option>
 						</select>
-						<input type="button" value="Add" id="addOpeningDay" />
+						<input type="button" value="הוסף" id="addOpeningDay" />
 						<div id="opening_hours_data">
 							<ul>
 								<?php
@@ -528,8 +528,9 @@ if(empty($isActive)){
 							<p>
 								זו הטבה ראשית, ללא הטבה זו העסק לא יוצג באתר האינטרנט \ באפליקציה.
 							</p>
-							<? if( have_rows('benefits', $business[0]->ID) ): ?>
-								<table class="main-benefit">
+							<?php if( have_rows('benefits', $business[0]->ID) ): ?>
+                                                            <div class="table-responsive">
+								<table class="main-benefit table">
 										<tr>
 											<th></th>
 											<th>Status</th>
@@ -564,7 +565,7 @@ if(empty($isActive)){
 													/*$targeted = ()*/
 										?>
 											<tr class="<?=$statusClass ?>">
-												<td><!--<a href="" class="benefitDelete" rel="<?/*=$ID;*/?>"><img src="<?php /*bloginfo('template_directory'); */?>/images/delete_icon.png" alt="" /></a>--></td>
+												<td><!--<a href="" class="benefitDelete" rel="<?php /*echo $ID;*/?>"><img src="<?php /*bloginfo('template_directory'); */?>/images/delete_icon.png" alt="" /></a>--></td>
 												<td><?=$statusText?></td>
 												<td>
 													<span class="ben-title" style="text-decoration:underline; cursor:pointer;"><?=the_sub_field('benefit_title');?></span>
@@ -598,18 +599,19 @@ if(empty($isActive)){
 														?>
 														<img src="<?=$benPhoto ?>" />
 														
-														<? } ?>
+														<?php } ?>
 														<span class="desc"><?=the_sub_field('benefit_description')?></span>
 													</div>
 												</td>
 											</tr>
-										<? $i++; 
+										<?php $i++; 
 												}
 										endwhile;?>
 									
 								</table>
+                                                            </div>
 								<?php else: ?>
-										<a href="#" class="popmake-add-new-benefit" id="add_benefit">Add Benefit</a>
+										<a href="#" class="popmake-add-new-benefit" id="add_benefit">הוסף הטבה</a>
 								<?php endif; ?>
 							<?php 
 							$benefitId = get_post_meta($business[0]->ID, 'benefits_0_benefit_id', true);
@@ -618,7 +620,8 @@ if(empty($isActive)){
 
 							<div>
 								<h2>הטבות נוספות</h2>
-								<table class="additional">
+                                                            <div class="table-responsive">
+								<table class="additional table">
 										<tr>
 											<th></th>
 											<th>Status</th>
@@ -633,7 +636,7 @@ if(empty($isActive)){
 												<div class="section-border"></div>
 											</td>
 										</tr>
-										<? if( have_rows('benefits', $business[0]->ID) ): 
+										<?php if( have_rows('benefits', $business[0]->ID) ): 
 											$i = 0;
 												while (have_rows('benefits', $business[0]->ID)) : the_row(); 									
 													if(get_sub_field('benefit_type') == "Additional") {
@@ -677,18 +680,24 @@ if(empty($isActive)){
 																	?>
 																	<img src="<?=$benPhoto ?>" />
 																	
-																	<? } ?>
+																	<?php } ?>
 																	<span class="desc"><?=the_sub_field('benefit_description')?></span>
 																</div>
 															</td>
 														</tr>
-											<? $i++; 
+											<?php $i++; 
 													}
 											endwhile;?>
-										<? endif; ?>
+										<?php endif; ?>
 									</table>
+                                                            </div>
 							<a href="#" class="popmake-add-benefit" id="add_benefit"> הוסף הטבה חדשה</a>
 							</div>
+                                                                                                                                        <?php else: ?>
+   <div class="premium_label_icon">                                                                            
+       <label><h2>הטבות משניות</h2></label>
+       <p>משתמשי פרימיום יכולים להוסיף עד ל10 הטבות משניות</p>
+   </div>
 							<?php endif; ?>
 						</div>
 					</div>
@@ -697,10 +706,10 @@ if(empty($isActive)){
 		</div>
 		<div class="accordion" id="a4">
 			<div class="accordion-section">
-				<a class="accordion-section-title <?php if($business_pack == 'Free'){echo "blocked";} ?>" href="" title="4" style="background: #cbc5bd;">
+				<a class="accordion-section-title <?php if($business_pack !== 'Premium'){echo "blocked";} ?>" href="" title="4" style="background: #cbc5bd;">
 					<span style="display: block; color: #fff; position: relative; top: 13px;">שלח הודעה ללקוחות האתר</span>
 				</a>
-				 <?php if($business_pack != 'Free' ): ?>
+				 <?php if($business_pack === 'Premium' ): ?>
 				<div id="accordion-4" class="accordion-section-content">
 					<div class="accordion-section-padding">
 						<div id="manage_business_benefits">
@@ -708,7 +717,8 @@ if(empty($isActive)){
 							<p>
 								בלה בלו בלי בלו בלה בלה בלה
 							</p>
-							<table>
+                                                    <div class="table-responsive">
+							<table class="table">
 								<tr>
 									<th></th>
 									<th>סטטוס</th>
@@ -720,7 +730,7 @@ if(empty($isActive)){
 									<th>לקוחות<br /> צפו</th>
 									<th>פעולות</th>
 								</tr>
-								<?
+								<?php
 										$args = array(
 											'author' => $current_user->ID,
 											'post_type' => 'message',
@@ -793,16 +803,17 @@ if(empty($isActive)){
 														?>
 														<img src="<?=$message_image ?>" />
 														
-														<? } ?>
+														<?php } ?>
 														<span class="desc"><?=$details ?></span>
 													</div>
 												</td>
 											</tr>
-										<? 
+										<?php 
 										endwhile;?>
-									<? endif; wp_reset_query(); ?>
+									<?php endif; wp_reset_query(); ?>
 								
 							</table>
+                                                    </div>
 							<a href="#" class="popmake-notification-clients-message-popup" id="add_benefit">שלח הודעה חדשה</a>
 						</div>
 					</div>
@@ -812,7 +823,7 @@ if(empty($isActive)){
 		</div>
 		<?php  if($business_pack == 'Free' ) { ?>
 			<div class="premium">
-				<a href="">Upgrade to Premium Now!</a>
+				<a href="<?php echo home_url('/payment/') ?>">Upgrade to Premium Now!</a>
 			</div>
 		<?php } ?>
 		<script>

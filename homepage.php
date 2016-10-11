@@ -6,8 +6,9 @@
 
 get_header();
 global $wpdb;
+global $sitepress;
+$currentLanguage = $sitepress->get_current_language();
  ?>
-
 	<div class="container">
 
 		<div id="sidebar">
@@ -64,8 +65,11 @@ global $wpdb;
         <div class="categories-container">
         <?php 
           foreach($visibleCategories as $cat){
+              
+              $catId = (int) icl_object_id($cat->term_id, 'business_cat', false, 'en');
+              $cat = get_term_by('id', $catId, 'business_cat');
               $catTitle = $cat->name;
-              $catId = (int) $cat->term_id;
+              //$catTitle = get_the_title($catId);
               $catLink =  get_term_link($catId, 'business_cat');
               ?>
               <div class="category-container">
@@ -97,8 +101,9 @@ global $wpdb;
                         ),
                       ),
                       'showposts' => 3,
-                      'orderby' => 'date',
-                      'order' => 'DESC',
+                      'meta_key' => 'benefit_created_at',
+                        'orderby'  => 'meta_value_num',
+                        'order'    => 'DESC',
                     );
               } else {
                 $args = array(
@@ -111,14 +116,17 @@ global $wpdb;
                       'terms' => $catId
                     )
                   ),
-                  'meta_key' => 'visibility',
-                  'meta_value' => "1",
+                    'meta_query' => array(
+                        'key'     => 'visibility',
+                          'value'   => "1"
+                    ),
                   'showposts' => 3,
-                  'orderby' => 'date',
-                  'order' => 'DESC',
+                  'meta_key' => 'benefit_created_at',
+                        'orderby'  => 'meta_value_num',
+                        'order'    => 'DESC',
                 );
               }
-
+              $logoSrc = '';
               $bizs = new WP_Query($args);
               if($bizs->have_posts()):
                 while($bizs->have_posts()):
@@ -126,10 +134,14 @@ global $wpdb;
                   $bizId = get_the_id();
                   $bizTitle = get_the_title();
                   $bCity = get_field('bcity', $bizId);
-                  $city = get_post($bCity);
+                  $iclBizCity =  icl_object_id($bCity, 'city', false);
+                  $city = get_post($iclBizCity);
                   $bCity = $city->post_title;
-                  $logo = $logo = get_field("logo", $bizId);
+                  $logo = get_field("logo", $bizId);
                   $link = get_permalink();
+                  if($currentLanguage == 'he'){
+                      $link = str_replace('/business/', '/he/business/', $link);
+                  }
                   if(!empty($logo)){
                     if(is_numeric($logo)){
                           $logoSrc = wp_get_attachment_image_src($logo)[0];
@@ -142,7 +154,7 @@ global $wpdb;
                 <div class="discount-preview">
                   <div class="discount-preview-container">
                     <div class="discount-preview-image">
-                      <a href="<?=$link ?>"><img src="<?=$logoSrc ?>"></a>
+                      <a href="<?=$link ?>"><img src="<?=$logoSrc ?>" alt="logo"></a>
                     </div>
                     <div class="discount-preview-footer">
                       <div class="discount-preview-title">

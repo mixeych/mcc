@@ -85,7 +85,7 @@ $business_pack = get_field("business_pack", $business[0]->ID);
 								<li>Facebook link</li>
 								<li class="active-sentence"> 1,000 benefit & coupons messages every mounth</li>
 								<li class="active-sentence"> Publish 10 additional benefits</li>
-								<li  class="price-sentence">50 <span><p>NIS + VAT</p> per month</span></li>
+								<li  class="price-sentence">50 <span>NIS + VAT per month</span></li>
 								</ul>
 								<ul class="body-sentence-item-ul">
 									<li>
@@ -129,7 +129,7 @@ $business_pack = get_field("business_pack", $business[0]->ID);
 								<li>Facebook link</li>
 								<li class="not-active-sentence"><span></span> 1,000 benefit & coupons messages every mounth</li>
 								<li class="not-active-sentence"><span></span> Publish 10 additional benefits</li>
-								<li  class="price-sentence">30<span><p>NIS + VAT</p> per month</span></li>
+								<li  class="price-sentence">30<span>NIS + VAT per month</span></li>
 								</ul>
 								<ul class="body-sentence-item-ul">
 								

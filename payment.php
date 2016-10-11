@@ -2,7 +2,6 @@
 /*
 * Template Name: Payment
 */
-
 global $current_user;
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     check_user_auth();
@@ -10,6 +9,11 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 if(is_user_logged_in()&&isset($current_user->caps['subscriber'])){
 	wp_redirect(home_url());
 }
+$sessStatus = session_status();
+if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
+    session_start();
+}
+$_SESSION['paymentPage'] = 1;
 global $sitepress;
 get_header(); 
 
@@ -31,27 +35,49 @@ $id = get_the_id();
 
 ?>
 	<div class="container  primary-pyment">
-
+            
 		<div id="primary-pyment" class="content-area">
 			<main id="main">
 				<div class="static-text">
-					<p>Become a Premium User and enjoy all of the MyCityCard
+                                    <p>Become a <span class="orange">Premium User</span> and enjoy all of the <span class="orange">MyCityCard</span>
 
                                             system benefits for your business.</p>
 
-                                        <p>You are currently a: <?php echo $business_pack ?> user.</p>
+                                    <p>You are currently a: <span class="orange"><?php echo $business_pack ?> user.</span></p>
 <?php 
 $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
 if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 ?>
-                                        <p>Payment amount: <?php echo $tranzillaInfo['paymentAmount'] ?> NIS + vat per month ()</p>
-                                        <?php if($tranzillaInfo['cardNumber']): ?>
-                                        <p>Card number: xxxx-xxxx-xxxx-<?php echo $tranzillaInfo['cardNumber'] ?></p>
+                                        
+                                        <?php 
+                                            $paymentAmount = $tranzillaInfo['paymentAmount'].' NIS + vat per month ()';
+                                            if(isset($tranzillaInfo['stopPaying']) && $tranzillaInfo['stopPaying']){
+                                                $paymentAmount = '';
+                                            }
+                                        ?>
+                                        <p>Payment amount: <?php echo $paymentAmount ?> </p>
+                                        <?php 
+                                        $cardNumber = $tranzillaInfo['cardNumber'];
+                                        if(empty($cardNumber)&&!empty($tranzillaInfo['token'])){
+                                            $cardNumber = substr($tranzillaInfo['token'], -4);
+                                        }
+                                        if(!empty($cardNumber)): ?>
+                                        <p>Card number: <span class="orange">xxxx-xxxx-xxxx-<?php echo $cardNumber ?></span></p>
                                         <?php endif; ?>
                                         <?php if($tranzillaInfo['expmonth']&&$tranzillaInfo['expyear']): ?>
-                                        <p>Card expiration date: <?php echo $tranzillaInfo['expmonth'] ?>/<?php echo $tranzillaInfo['expyear'] ?></p>
+                                        <p>Card expiration date: <span class="orange"><?php echo $tranzillaInfo['expmonth'] ?>/<?php echo $tranzillaInfo['expyear'] ?></span></p>
                                         <?php endif; ?>
-                                        <p>Next Payment date: <?php echo date('d.m.Y' ,$tranzillaInfo['nextPaymentDate']) ?></p>
+                                        <?php 
+                                            $nextPaymentDate = date('d.m.Y' ,$tranzillaInfo['nextPaymentDate']);
+                                            if(isset($tranzillaInfo['stopPaying']) && $tranzillaInfo['stopPaying']){
+                                                
+                                                $nextPaymentDate = '';
+                                            }
+                                            if($tranzillaInfo['business_pack']=== 'premium_year'){
+                                                $nextPaymentDate = date('d.m.Y' ,$tranzillaInfo['paymentYear']);
+                                            }
+                                        ?>
+                                        <p>Next Payment date: <span class="orange"><span class="next-payment-date"><?php echo $nextPaymentDate ?></span></span></p>
 <?php endif; ?>
                                         <?php if($business_pack != 'Premium'): ?>
                                         <p>Upgrade to Premium Package and enjoy all system benefits:</p>
@@ -62,14 +88,14 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 </ul>
                                         <?php 
                                         endif; 
-                                        if(!empty($tranzillaInfo)): ?>
-                                        <p><a id="change-credit-card" href="#">Change card</a> | <a id="remove-credit-card" href="#">Remove card</a></p>
+                                        if(!empty($tranzillaInfo)&&!empty($tranzillaInfo["token"])): ?>
+                                        <p><a id="change-credit-card" href="#">Change card</a> | <a class='stop-paying' href="#" data-currentPack="<?php echo $business_pack ?>">Remove card</a></p>
                                                 <?php endif; ?>
 				</div>
 				<div class="sentence">
 					<div class="free-sentence">
 						<div class="header-sentence-item">
-							<p>free</p>
+							<p>Free</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
@@ -77,7 +103,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 						</div>
 						<?php
                                                         $className = "";
-							if($business_pack == 'Free'){
+							if($business_pack == 'Free'||$tranzillaInfo['stopPaying'] === true){
 								$buttonText = 'CURRENT';
                                                                 $className = '';
 							}else{
@@ -92,7 +118,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 					</div>
 					<div class="premium-sentence">
 						<div class="header-sentence-item">
-							<p>premium</p>
+							<p>Premium</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
@@ -101,7 +127,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 						<div class="footer-sentence-item">
 							<?php
                                                                 $className = "";
-								if($business_pack == 'Premium'){
+								if($business_pack == 'Premium'&&$tranzillaInfo['stopPaying'] !== true&&$tranzillaInfo['downgrade'] !== 'basic'){
 									$buttonText = 'STOP PAYING';
                                                                         $className = 'stop-paying';
                                                                         
@@ -109,13 +135,36 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
                                                                     $className = "upgrade";
 									$buttonText = 'UPGRADE';
 								}
+                                                                $premiumPrice = '50';
+                                                                $val = get_option('premium_price');
+                                                                if($val){
+                                                                   $premiumPrice = $val['input']; 
+                                                                }
+                                                                $priceForYear = '570';
+                                                                $val = get_option('pay_for_year_price');
+                                                                if($val){
+                                                                    $priceForYear = $val['input'];
+                                                                }
+                                                                $basicPremium = '20';
+                                                                $val = get_option('basic_to_premium');
+                                                                if($val){
+                                                                    $basicPremium = $val['input'];
+                                                                }
+                                                                $basicPremiumYear='570';
+                                                                        $val = get_option('basic_to_premium_year');
+                                                                        if($val){
+                                                                            $basicPremiumYear = $val['input'];
+                                                                        }
+                                                                
 							?>
-							<a data-currentPack="<?php echo $business_pack ?>" href="javascript:void(0)" id="basic" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
+							<a data-currentPack="<?php echo $business_pack ?>" data-price="<?php echo $premiumPrice ?>" data-foryear="<?php echo $priceForYear ?>" href="javascript:void(0)" id="basic" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
+                                                        <input id="basic-premium" type="hidden" value="<?php echo $basicPremium ?>" />
+                                                        <input id="basic-premium-year" type="hidden" value="<?php echo $basicPremiumYear ?>" />
 						</div>
 					</div>
 					<div class="basic-sentence">
 						<div class="header-sentence-item">
-							<p>basic</p>
+							<p>Basic</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
@@ -124,18 +173,23 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 						<div class="footer-sentence-item">
 							<?php
                                                                 $className = "";
-								if($business_pack == 'Basic'){
+								if(($business_pack == 'Basic'||$tranzillaInfo['downgrade'] == 'basic')&&$tranzillaInfo['stopPaying'] !== true){
 									$buttonText = 'STOP PAYING';
                                                                         $className = 'stop-paying';
-								}elseif($business_pack == 'Premium'){
+								}elseif($business_pack == 'Premium'&&$tranzillaInfo['stopPaying'] !== true){
 									$buttonText = 'DOWNGRADE';
                                                                         $className = 'downgrade';
 								}else{
                                                                     $className = "upgrade";
 									$buttonText = 'UPGRADE';
 								}
+                                                            $basicPrice = '30';
+                                                            $val = get_option('basic_price');
+                                                            if($val){
+                                                                $basicPrice = $val['input'];
+                                                            }
 							?>
-							<a href="javascript:void(0)" id="premium" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
+							<a href="javascript:void(0)" id="basic" data-price="<?php echo $basicPrice ?>" class="pay-button <?php echo $className ?>" data-currentPack="<?php echo $business_pack ?>"><?php echo $buttonText ?></a>
 						</div>
 					</div>
 					</div>
@@ -146,9 +200,10 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 
 				<div class="bottom-content-payment">
 					<?php
+                                        
 						if($business_pack == 'Premium') {
                                                     ?>
-                                    <p>You currently have: <?php echo $messages_have ?> messages</p>
+                                    <p>You currently have: <span><?php echo $messages_have ?> messages</span></p>
                                                     <?php
                                                     
 							the_field('bottom_table');
@@ -159,7 +214,12 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 			</main> <!-- #main
 		</div> --><!-- #primary-->
 <?php
+$val = get_option('basic_price');
 $sum = '50';
+if($val){
+    $sum = $val['input'];
+}
+
 $lang = 'he';
 if('he' ===  $sitepress->get_current_language()){
    $lang = 'il'; 
@@ -181,29 +241,31 @@ $tranmode = 'AK';
 
 ?>
 		<div class="popup custom-popup" style="display:none">
-			<span class="popup-close">X</span>
-			<div class="popup-content">
-                            <iframe
-                                width="455px"
-                                height="500px;" 
-                                src="https://direct.tranzila.com/<?php echo $terminal_name ?>/iframe.php?
-                                 sum=<?php echo $sum; // required field ?> 
-                                 &currency=<?php echo $currency; // required field ?>
-                                 &cred_type=<?php echo $cred_type; //required field ?>
-                                 &lang=<?php echo $lang;?>
-                                 &nologo=<?php echo $logo; ?>
-                                 &trBgColor=<?php echo $trBgColor; ?>
-                                 &trTextColor=<?php echo $trTextColor; ?>
-                                 &trButtonColor=<?php echo $trButtonColor; ?>
-                                 &buttonLabel=<?php echo $buttonLabel; ?>
-                                 &tranmode=<?php echo $tranmode; ?>
-                                 &MCCUserID=<?php echo $current_user->ID ?>
-                                 &product=package
-                               "
-                                frameborder="0"
-                                >
-                             </iframe>
-			</div>
+                    <span class="popup-close">X</span>
+                    <div class="popup-content">
+                        <iframe
+                            width="455px"
+                            height="500px;" 
+                            src="https://direct.tranzila.com/<?php echo $terminal_name ?>/iframe.php?
+                             &sum=<?php echo $sum ?>
+                             &currency=<?php echo $currency ?>
+                             &cred_type=<?php echo $cred_type; ?>
+                             &MCCUserID=<?php echo $current_user->ID ?>
+                             &lang=<?php echo $lang;?>
+                             &nologo=<?php echo $logo; ?>
+                             &trBgColor=<?php echo $trBgColor; ?>
+                             &trTextColor=<?php echo $trTextColor; ?>
+                             &trButtonColor=<?php echo $trButtonColor; ?>
+                             &buttonLabel=<?php echo $buttonLabel; ?>
+                             &tranmode=<?php echo $tranmode; ?>
+                             &product=package
+                             &email=<?php echo $current_user->user_email ?>
+                             &contact=<?php echo $current_user->display_name ?>
+                           "
+                            frameborder="0"
+                            >
+                         </iframe>
+                    </div>
 		</div>
                         
                 <?php 
@@ -239,6 +301,12 @@ $tranmode = 'AK';
                 <?php endif; endif; endif; ?>
 <?php endif; ?>
 	</div>
+        <script>
+            jQuery(function(){
+                var package = '<?php echo $business_pack ?>'.toLowerCase();
+                $('.'+package+'-sentence').find('.body-sentence-item-ul').remove();
+            });
+        </script>
 <?php 
 
 get_footer(); ?>

@@ -33,7 +33,7 @@ $bCity = get_field("bcity", $bizId);
 
 		if(get_sub_field('benefit_status') == 1 && ($posTitle !== false || $posDesc !==false)) {
 
-			if($city !='all' && $areaText != 'All MCC Holders' && $bCity != $city){
+			if($city !='all' && $areaText != 'All MyCityCard holders' && $bCity != $city){
 				continue;
 			}
                         $benId = get_sub_field('benefit_id');

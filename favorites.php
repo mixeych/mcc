@@ -16,8 +16,22 @@ global $current_user;
 		<div id="primary" class="content-area">
 			<main id="main">
 				<div class="choose-fav-type">
-					<a href="javascript:void(0)" class="biz active-tab">Favorite Businesses</a>
+							<?php 
+                                    global $sitepress;
+                                    $current_language = $sitepress->get_current_language();
+                                    if($current_language === 'en'): 
+                                    ?>
+										<a href="javascript:void(0)" class="biz active-tab">Favorite Businesses</a>
 					<a href="javascript:void(0)" class="ben">Favorite Benefits</a>
+					
+                                    <?php else: ?>
+                                     <a href="javascript:void(0)" class="biz active-tab">עסקים מועדפים</a>
+					<a href="javascript:void(0)" class="ben">הטבות מועדפות</a>
+                                    <?php endif; ?>
+					
+
+
+					
 				</div>
 
 				<?php 
@@ -41,8 +55,14 @@ global $current_user;
 										
 									}
 									$cityId = get_field('bcity', $business_id);
-									$city = get_the_title($cityId);
+                                                                        $iclCityId = icl_object_id($cityId, 'city', true);
+									$city = get_the_title($iclCityId);
+                                                                        $iclBizId = icl_object_id($business_id, 'city', true);
 									$link = get_permalink($business_id);
+                                                                        if($current_language === 'he'){
+                                                                            $link = str_replace('/business/', '/he/business/', $link);
+                                                                            
+                                                                        }
 									$description = get_field("short_description", $business_id);
 									?>
 										<div class="category-item">

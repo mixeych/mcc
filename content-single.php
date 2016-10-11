@@ -4,7 +4,8 @@
  */
  
 global $current_user;
-
+global $sitepress;
+$currentLanguage = $sitepress->get_current_language();
 $logo = get_field("logo", get_the_ID());
 
 $likes_field = get_field("user_likes", get_the_ID());
@@ -86,7 +87,8 @@ if($business_pack == 'Free') {
 			$short_link = wp_get_shortlink(); 
 			$bizTitle = get_the_title();
 			$bCity = get_post_meta($post_id, 'bcity', true);
-			$ciytName = get_the_title($bCity);
+                        $iclCityId = icl_object_id($bCity, 'city', true);
+			$ciytName = get_the_title($iclCityId);
 			$content = "Click to watch $bizTitle benefits in $ciytName $short_link";
 			?>
 			<a target="_blank" href="https://twitter.com/home?status=<?= $content ?>"><img src="<?php bloginfo('template_directory'); ?>/images/twitter_icon.png" alt="" /></a>
@@ -225,20 +227,29 @@ function initMap() {
 				$homepage = get_field("homepage", $post_id);
 				$facebook = get_field("facebook_page", $post_id);
 				if(!empty($homepage)):
+                                    if($currentLanguage == 'en'):
 			?>
 				<a href="<?=get_field("homepage", $post_id);?>" target="_blank">Home page</a><br />
-				<?php 
+				<?php
+                                    else: ?>
+                                    <a href="<?=get_field("homepage", $post_id);?>" target="_blank">דף הבית</a><br />
+                                    <?php
+                                    endif;
 				endif;
 				if(!empty($facebook)):
-				?>
+				
+                                    if($currentLanguage == 'en'):
+			?>
 				<a href="<?=get_field("facebook_page", $post_id);?>" target="_blank">Facebook page</a>
-				<?php endif; ?>
+                                <?php else: ?>
+                                <a href="<?=get_field("facebook_page", $post_id);?>" target="_blank"> דף פייסבוק</a>
+				<?php endif; endif; ?>
 			<?php endif; ?>
 			</div>
 		</div>
 	</div>
 	<div class="business_page_benefits_warp">
-		<? if( have_rows('benefits', $post_id) ): ?>
+		<?php if( have_rows('benefits', $post_id) ): ?>
 			<?php 
 			$i = 0;
 			$favBens = get_favorite_benefits($post_id, $current_user->ID);
@@ -249,8 +260,13 @@ function initMap() {
 			    }
 				if(get_sub_field('benefit_status') == 1) {
 					$i++;
-					if($i==1)
-						echo '<div class="business_page_benefits_title"><b>Business Benefits:</b></div>';	
+					if($i==1){
+                                            if($currentLanguage == 'en'){
+						echo '<div class="business_page_benefits_title"><b>Business Benefits:</b></div>';
+                                            }else{
+                                                echo '<div class="business_page_benefits_title"><b>הטבות של העסק</b></div>';
+                                            }
+                                        }
 					$benId = get_sub_field('benefit_id');
 					$benefitFavClass = 'addFavBenefit';
 					if(is_array($favBens)){
@@ -264,10 +280,17 @@ function initMap() {
 					$validThru = get_sub_field("benefit_type") == "Additional"?"Valid through ".get_sub_field('benefit_expiration'):"";
 					$benefitType = get_sub_field("benefit_type");
 					$areaText = get_sub_field('area');
+                                        if($currentLanguage == 'he'){
+                                            if($areaText == 'ALL MCC Holders'){
+                                                 $areaText = ' כל מחזיקי כרטיס MyCityCard';
+                                            }else{
+                                                $areaText ='  למחזיקי כרטיס'.$ciytName;
+                                            }
+                                        }
 
 			?>
 				<div class="business_page_benefit <?php if($benefitType == 'Main Benefit'){echo 'main';} ?>">
-					<div class="business_page_benefit_discount"><img src="<? echo get_sub_field('benefit_image')["url"];?>" /></div>
+					<div class="business_page_benefit_discount"><img src="<?php echo get_sub_field('benefit_image')["url"];?>" /></div>
 					<div class="business_page_benefit_details">
 						<div class="business_page_benefit_title"><?=the_sub_field('benefit_title');?></div>
 						<div class="business_page_benefit_card"><?=$areaText?></div>
@@ -288,7 +311,7 @@ function initMap() {
 				} 
 			endwhile;
 			?>
-		<? endif; ?>
+		<?php endif; ?>
 	</div>
         <?php 
             $addinfo = get_field("additional_info", $post_id);
@@ -296,7 +319,11 @@ function initMap() {
             if(!empty($addinfo)):
         ?>
 	<div class="business_page_benefits_warp">
+            <?php if($currentLanguage=='en'): ?>
             <div class="business_page_benefits_title"><b>About</b></div>
+            <?php else: ?>
+            <div class="business_page_benefits_title"><b>אודות העסק</b></div>
+            <?php endif; ?>
 		<?php
 			
 			echo $addInfo;

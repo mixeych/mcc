@@ -997,7 +997,7 @@ font-weight:300;
 }
 
 .site-title{
-float:left;
+float:right!important;
 
 }
 
@@ -1560,7 +1560,7 @@ float: left
 	margin-left: 0;
 }
 .business_page_benefit_card {
-	background: url("images/benefit_card_icon.png") no-repeat right center;
+	background: url("images/benefit_card_icon.png") no-repeat right center!important;
 	padding-left: 0;
 	padding-right: 27px;
 	text-align: right;
@@ -1881,8 +1881,8 @@ margin-left:auto;
 margin-right:auto;
 }
 .lang > a:nth-child(1) img{
-	margin-left: 13%;
-	margin-right: 0;
+	margin-left: 1%;
+	margin-right: 1%;
 }
 	#click-menu {
 		right: 90%;
@@ -2160,4 +2160,201 @@ footer .container-inner-bot span {
 
 #popmake-2915 .popmake-close{
     display: none;
+}
+#accordion-2 .main-logo:before{
+
+    content: " בחר לוגו";
+
+}
+
+@media (max-width: 986px){
+	.site-branding{
+		float: right!important;
+	}
+	.lang > a > img{
+		float: left!important;
+	}
+	.main-navigation li{
+		float: right!important;
+	}
+	.footer .container-inner-bot li{
+		float: right!important;
+	}
+	.logo-choose{
+		float: right!important;
+		width: 100%!important;
+	}
+	.main-logo{
+		width: auto!important;
+	}
+	.main-logo input{
+		float: right!important;
+	}
+	.main-logo:before{
+		    right: 0;
+		    left: auto!important;
+	}
+	.business_page_benefit_discount{
+		float: right!important;
+	}
+	.business_page_benefit_title{
+		text-align: right!important;
+	}
+	.lang > a:nth-child(1) img {
+    margin-left:13%;
+        margin-right: 0!important;
+	}
+	.business_page_benefit_card{
+		text-align: right!important;
+	}
+	.business_page_benefit_card {
+    background: url("images/benefit_card_icon.png") no-repeat right center!important;
+	}
+	.business_page_benefit_details p{
+		text-align: right!important;
+	}
+	.business_page_benefit_details{
+		float: right!important;
+	}
+	.business_page_logo{
+		float: right!important;
+	}
+	.business_page_title{
+		text-align: right!important;
+	}
+	.business_page_title h1{
+		float: right!important;
+	}
+	.business_page_likes_row{
+		background: url("images/heart_icon.png") no-repeat right center!important;
+		float:right!important;
+		    padding-right: 20px
+	}
+	.popmake{
+		left: 0!important;
+		padding: 0!important;
+	}
+	.popmake-overlay{
+		display: none!important;
+
+	}
+	.popmake-content{
+		padding: 0!important;
+	}
+	#cities form select{
+		width: 100%!important;
+	}
+	.lang .textwidget a{
+	font-size: 14px;
+}
+.business_page_title{
+	margin-left: 0px!important; 
+}
+.business_page_benefit::after{
+	    background: url("images/benefit_chup_he.png") no-repeat!important;
+}
+a.business_page_info_map_button {
+    float: right!important;
+}
+#click-menu{
+	right: auto!important;
+	left: 5%;
+}
+}
+
+
+.premium_label_icon h2 {
+background:url("images/premium_label_icon.png") no-repeat right center!important;
+padding-right: 21px;
+}
+.lang > a > img{
+	float: left!important;
+}
+.site-branding{
+	    float: right!important;
+}
+#header-bottom-search{
+	    float: left!important;
+}
+#cities{
+	    float: right!important;
+}
+#ads{
+	    float: left!important;
+    margin-right: 27px!important;
+    margin-left: 0!important;
+}
+
+.content-area{
+	float: right!important;
+}
+#sidebar{
+	    float: right!important;
+	    margin-right: 0!important;
+}
+
+.category-item{
+	float: right!important;
+	    margin-right: 0!important;
+	        margin-left: 11px!important;
+}
+.main-navigation{
+	float: left!important;
+}
+.business_page_logo{
+	float:  right!important;
+}
+.business_page_social{
+	float: left!important;
+}
+.business_page_title{
+	float: right!important;
+}
+.business_page_title h1{
+	float: right!important;
+}
+.business_page_info_left_side{
+	float: right!important;
+}
+.business_page_benefit_discount{
+	float: right!important;
+}
+.business_page_benefit_fav img{
+	left: auto!important;
+	right: 40%;
+}
+.business_page_benefit_details{
+	float: right!important;
+}
+.business_page_benefit_fav{
+	    position: absolute!important;
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+.business_page_benefit{
+	position: relative;
+}
+.free-sentence{
+	float: right!important;
+}
+.basic-sentence{
+		float: left!important;
+}
+.premium-sentence{
+	float: right!important;
+}
+article .business_logo{
+	float: right!important;
+}
+
+
+article .business_header_likes{
+	background: url("images/heart_icon.png") no-repeat right center!important;
+}
+article .business_header h1{
+	float: right!important;
+}
+article .business_desc{
+	float: right!important;
 }

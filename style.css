@@ -1715,7 +1715,7 @@ overflow:hidden;
 
 .category-item .discount-preview-image img{
 width: 100%;
-
+height: 157px;
 object-fit: cover;
 }
 
@@ -2524,9 +2524,10 @@ width: 100%;
 float:left;
 }
 
-.premium_label_icon label {
+.premium_label_icon h2 {
 background:url("images/premium_label_icon.png") no-repeat left center;
 padding-left: 21px;
+display: table;
 }
 
 .disable_border {
@@ -2754,9 +2755,13 @@ float: left;
 
 .business_page_logo {
 float: left;
-max-width: 95px;
+width: 75px;
+height: 75px
 }
-
+.business_page_logo img{
+	width: 100%;
+	height: 100%;
+}
 .business_page_social {
 float:right;
 }
@@ -4036,14 +4041,16 @@ footer .container-inner-bot span{
 	display: none!important;
 }
 .table-pyment{
-	display: none!important;
+	    width: 1209px;
 }
 .free-sentence .body-sentence-item-ul{
 	    position: relative!important;
 	    bottom: 0!important;
     	left: 0!important;
 }
-
+.premium-sentence:after, .basic-sentence:after{
+	display: none;
+}
 
 }
 @media (max-width:550px){
@@ -4222,7 +4229,7 @@ footer .container-inner-bot span{
 	}
 	.category-item .discount-preview-image {
 		width: 100%;
-		height: auto;
+	
 		overflow: hidden;
 	}
 	.category-item {
@@ -4289,7 +4296,7 @@ margin: 0;
 .premium-sentence{
 	float: left;
 	width: 33.33333333%;
-	height: 947px;
+	height: 915px;
 	border: 1px solid #d6d6d6;
 	position: relative;
 	top: -20px; 
@@ -4366,10 +4373,14 @@ transform: translate(-50%,-50%);
 .footer-sentence-item{
 	position: absolute;
 	bottom: 0;
-	left: 50%;
-	transform: translateX(-50%);
+	    left: 52px;
 }
-
+#basic{
+	    width: 213px;
+}
+#free{
+	width: 217px;
+}
 .premium-sentence .footer-sentence-item a{
 	background-color: #d28b26;
 }
@@ -4422,7 +4433,7 @@ transform: translate(-50%,-50%);
     margin-right: 20px;
 }
 .price-sentence span{
-	font-size: 13px!important;
+	font-size: 30px!important;
 } 
 .not-active-sentence{
 	color: #c5c5c5!important;
@@ -4466,7 +4477,7 @@ transform: translate(-50%,-50%);
 	display: inline-block!important;
 }
 .price-sentence{
-	font-size: 33px!important;
+	font-size: 18px!important;
 	color:#d28b26!important;
 }
 .body-sentence-item-ul li{
@@ -4541,7 +4552,7 @@ transform: translate(-50%,-50%);
 
 .bottom-content-payment p{
 	font-weight: bold;
-	font-size: 22px;
+	font-size: 19px;
 
 }
 .table-pyment{
@@ -4565,7 +4576,7 @@ transform: translate(-50%,-50%);
 }
 .chek-box-table .checkbox-sentence{
     left: 18px;
-    top: 13px;
+    top: 29px;
 }
 .by-package td{
 	padding: 25px;
@@ -4626,9 +4637,18 @@ article .business_logo img{
 	font-size: 24px;
 	color: #d28b26;
 }
-.price-table span{
+.price-table span.price{
 	font-size: 45px;
 	font-weight: bold;
+
+}
+.bottom-content-payment span{
+	color: #d28b26;
+}
+.price-table span.price2{
+	font-size: 20px;
+	color: #000;
+	display: block;
 
 }
 .textwidget{
@@ -4703,4 +4723,94 @@ margin: 10px 0;
 	float: right;
 	margin: 5px;
 	cursor: pointer;
+}
+
+#input_17_1_chosen{
+	width: 100%!important;
+}
+.checkbox-sentence p{
+    width: 221px;
+}
+.sentence .pay-button{
+	    width: 218px;
+}
+
+#content > div > div.bottom-content-payment > table > tbody > tr.chek-box-table > td > p{
+	font-size: 14px;
+}
+@media(max-width: 768px){
+
+.lang .textwidget{
+    display: flex;
+        align-items: center;
+        position: relative;
+        top: -5px;
+}
+.business_page_title{
+	width: 70%;
+}
+.business_page_social {
+    float: left;
+    margin-left: 14px;
+}
+.business_page_info_ad img{
+	margin: 0 auto;
+}
+#header-bottom .container{
+	margin: 0 auto;
+}
+/*#click-menu{
+	display: none;
+}*/
+
+.lang > a:nth-child(1) img{
+	    margin-right: 13%;
+}
+.business_header_likes.like_disable{
+	float: left;
+    clear: both;
+    display: block;
+}
+#commentform input{
+	width: 75%;
+}
+#commentform label{
+	    width: 23%;
+    display: inline-block;
+}
+.wp-social-login-provider-list img{
+	/*width: 53px;
+	height: 28px;*/
+}
+.wp-social-login-provider-list{
+	padding: 0 2px;
+}
+.lang .textwidget a{
+	font-size: 11px;
+}
+}
+
+.cities-custom:before{
+	content: '';
+	display: block;
+
+}
+#responsive-menu.active-menu{
+	position: absolute;
+	    top: 0;
+    width: 75%;
+    background-color: #fff;
+    height: auto;
+}
+
+@media(max-width: 768px){
+	#manage_business_benefits table th:nth-child(6){
+		    font-size: 100%!important;
+	}
+	#manage_business_benefits table td:nth-child(6){
+		 font-size: 100%!important;
+	}
+	.table-responsive{
+	overflow: scroll;
+}
 }

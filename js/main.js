@@ -3,14 +3,17 @@ jQuery(document).bind('gform_confirmation_loaded', function(event, formId){
     if(formId == 6){
     	$('#popmake-118').css('position','fixed');
     	$('#popmake-742').css('position','fixed');
-    	setTimeout(function(){
-    		window.location = window.location.href; 
-    	}, 3000);
+//    	setTimeout(function(){
+//    		window.location = window.location.href; 
+//    	}, 3000);
     }
 });
 
 jQuery(document).ready(function($) {
-
+    
+    jQuery(".custom-popup .popup-close").click(function(){
+        window.location.reload();
+    });
 	if($("body").hasClass("page-id-126")||$("body").hasClass("page-id-747")){
 		
                 var bizUserRole = $("#accordion-1").attr("data-bizrole");
@@ -30,7 +33,7 @@ jQuery(document).ready(function($) {
                                         var res = data.result;
                                         if(res.length>0){
                                                 var inputs = $("#gform_fields_10").find(".sub_categ_premium");
-
+                                                
                                                 for (var i = 0; i<res.length; i++){
                                                         $(inputs[i]).find("select option").each(function(){
 
@@ -61,20 +64,28 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
                 var checked = $(this).parent().siblings(".body-sentence-item").find(".checkbox-sentence .terms").prop("checked");
                 if(!checked){
+                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','red');
                     return false;
+                } else {
+                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','#4c453b');
                 }
                 var payForYear = $(this).parent().siblings(".body-sentence-item").find(".pay-for-year").prop("checked");
                 var price;
                 var currentPack = $(this).attr('data-currentPack');
                 if(currentPack==='Basic'&&payForYear){
-                    price = 570;
+                    console.log(1);
+                    price = $("#basic-premium-year").val();
                 }else if(payForYear&&$(this).parents(".premium-sentence").length&&currentPack !== 'Basic'){
-                    price = 600;
+                    console.log(2);
+                    price = $(this).attr("#data-foryear");
                 }else if(currentPack==='Basic'&&!payForYear){
-                    price = 20;
+                    price = $("#basic-premium").val();
+                    console.log(3);
                 }else{
-                    price = $(this).parent().siblings(".body-sentence-item").find(".price").text();
+                    price = $(this).attr("data-price");
+                    console.log(4);
                 }
+                console.log(price);
                 price = "sum="+price;
                 var url = $(".popup-content iframe").attr("src");
                 var newUrl = url.replace(/sum=([0-9]+)/, price);
@@ -84,9 +95,18 @@ jQuery(document).ready(function($) {
                 
 	});
         
-        $(".pay-button.stop-paying").click(function(e){
+        $(".stop-paying").click(function(e){
             e.preventDefault();
-            var res = confirm("Are you sure?");
+//            var checked = $(this).parent().siblings(".body-sentence-item").find(".checkbox-sentence .terms").prop("checked");
+//                if(!checked){
+//                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','red');
+//                    return false;
+//                } else {
+//                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','#4c453b');
+//                }
+            var date = $(".next-payment-date").text();
+            var package = $(this).attr("data-currentPack");
+            var res = confirm("you are going to downgrade to free account, your account will stay "+package+" until "+date);
             if(!res){
                 return false;
             }
@@ -97,14 +117,25 @@ jQuery(document).ready(function($) {
                 success: function(res){
                     if(res.success){
                         alert("stoped");
+                        window.location.reload();
                     }
                 }
             });
         });
         
         $(".pay-button.downgrade").click(function(e){
+//        	var checked = $(this).parent().siblings(".body-sentence-item").find(".checkbox-sentence .terms").prop("checked");
+//                if(!checked){
+//                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','red');
+//                    return false;
+//                } else {
+//                	$(this).parent().siblings(".body-sentence-item").find('p.validate-this').css('color','#4c453b');
+//                }
             e.preventDefault();
-            var res = confirm("Are you sure?");
+            var account = $(this).attr("id");
+            var date = $(".next-payment-date").text();
+            var res = confirm("you are going to downgrade to basic account, your account will stay premium until "+date);
+            
             if(!res){
                 return false;
             }
@@ -115,6 +146,7 @@ jQuery(document).ready(function($) {
                 success: function(res){
                     if(res.success){
                         alert("downgraded");
+                        window.location.reload();
                     }
                 }
             });
@@ -126,20 +158,15 @@ jQuery(document).ready(function($) {
 	})
         
         $(".btn-by-package").click(function(e){
+        	
             e.preventDefault();
-            var price = $(this).attr("data-price");
+            var index = $(".table-pyment .by-package td").index($(this).parent("td"));
+            var price = $(".table-pyment .price-table td").eq(index).find("span.price").text();
+            console.log(index);
+            console.log(price);
             if($(".message-popup").length){
-                var number;
-                switch(price){
-                    case '20': number = 1000;
-                        break;
-                    case '30': number = 2000;
-                        break;
-                    case '100': number = 10000;
-                        break;
-                    case '60': number = 5000;
-                        break;
-                }
+                var number = parseFloat($(".table-pyment .messages-table td").eq(index).text());
+                number *= 1000;
                 $(".message-popup span.number").html(number);
                 $(".message-popup input.sum").val(price);
                 $(".message-popup").fadeIn(200);
@@ -178,20 +205,13 @@ jQuery(document).ready(function($) {
             });
         });
         $("#change-credit-card").click(function(){
-           var res = confirm('Are you sure?');
-           if(!res){
-                return false;
-            }
-            $.ajax({
-                url: ajaxurl+"?action=removeCreditCard",
-                type: 'POST',
-                dataType: 'json',
-                success: function(res){
-                    if(res.success){
-                        window.location.reload();
-                    }
-                }
-            });
+            var url = $(".popup-content iframe").attr("src");
+            var newUrl = url.replace('tranmode=AK', 'tranmode=K');
+            var newUrl = newUrl.replace(/sum=([0-9]+)/, '');
+            var newUrl = newUrl.replace('currency=1', 'hidesum=1');
+            $(".custom-popup .popup-content iframe").attr("src", newUrl);
+            $(".popmake-overlay").css("background-color", "rgba( 12, 12, 12, 0.8 )").fadeIn(200);
+            $(".custom-popup").fadeIn(200);
         });
         
 	/*change logo*/
@@ -335,7 +355,7 @@ jQuery(document).ready(function($) {
 			type: 'POST',
 			data: { "pcatid" : val },
 			success: function(data) {
-				var options = '';
+				var options = '<option value="">Select a Sub Category</option>';
 				$.each(data, function(key, val) {
 					options += '<option value="' +data[key].value+ '">' +data[key].text+ '</option>';
 				});
@@ -419,39 +439,39 @@ jQuery(document).ready(function($) {
 
 	/*validate main photo/logo*/
 
-	$("#gform_submit_button_11").click(function(e){
-		e.preventDefault();
-		var validPhoto = false;
-		var validLogo = false
-		if(!$("#main_photo_block .business_gallery_image img").length){
-			if(!$("#main_photo_block").hasClass("gfield_error")){
-				$("#main_photo_block").addClass("gfield_error");
-			}
-			if(!$("#main_photo_block .validation_message").length){
-				$("#main_photo_block").append("<div class='validation_message'>This field is required.</div>");
-			}
-			 $('html, body').animate({
-                    scrollTop: $(".logo-choose").offset().top
-                }, 200);
-			 validPhoto = true;
-		}
-		var logo = $(".main-logo").attr("data-logo");
-		if(logo == 0){
-			validLogo = true;
-			if(!$(".logo-choose").hasClass("err")){
-				$(".logo-choose").addClass("err");
-			}
-			$('html, body').animate({
-                    scrollTop: $(".logo-choose").offset().top
-                }, 200);
-		}
-		if(!validLogo && !validPhoto){
-			$("#gform_11").submit();
-			return;
-		}else{
-			return;
-		}
-	});
+//	$("#gform_submit_button_11").click(function(e){
+//		e.preventDefault();
+//		var validPhoto = false;
+//		var validLogo = false
+//		if(!$("#main_photo_block .business_gallery_image img").length){
+//			if(!$("#main_photo_block").hasClass("gfield_error")){
+//				$("#main_photo_block").addClass("gfield_error");
+//			}
+//			if(!$("#main_photo_block .validation_message").length){
+//				$("#main_photo_block").append("<div class='validation_message'>This field is required.</div>");
+//			}
+//			 $('html, body').animate({
+//                    scrollTop: $(".logo-choose").offset().top
+//                }, 200);
+//			 validPhoto = true;
+//		}
+//		var logo = $(".main-logo").attr("data-logo");
+//		if(logo == 0){
+//			validLogo = true;
+//			if(!$(".logo-choose").hasClass("err")){
+//				$(".logo-choose").addClass("err");
+//			}
+//			$('html, body').animate({
+//                    scrollTop: $(".logo-choose").offset().top
+//                }, 200);
+//		}
+//		if(!validLogo && !validPhoto){
+//			$("#gform_11").submit();
+//			return;
+//		}else{
+//			return;
+//		}
+//	});
 
 	/*set expiration date*/
 
@@ -567,11 +587,12 @@ jQuery(document).ready(function($) {
 	});
 
 	/*add additional benefit*/
-	$("#manage_business_benefits > div #add_benefit").removeClass("popmake-add-benefit");
-	$("#manage_business_benefits > div #add_benefit").click(function(e){
+	$("#add_benefit").removeClass("popmake-add-benefit");
+	$("#add_benefit").click(function(e){
 		e.preventDefault();
-		var number = $("#manage_business_benefits > div table tbody tr.drop-down").length;
-		if(number > 10){
+		var number = $("#a3 > div table tbody tr.drop-down").length;
+                console.log(number);
+		if(number >= 10){
 			
 			$("#popmake-1818").popmake('open');
 			return;
@@ -582,6 +603,7 @@ jQuery(document).ready(function($) {
 				$("#popmake-758").popmake('open');
 			}
 			$("#input_7_1").val('');
+			$("#input_7_2").val('');
 			$("#input_7_10").val('');
 			var timestamp = Date.now();
 			var defaultTime = timestamp+(86400000*30);
@@ -671,12 +693,12 @@ jQuery(document).ready(function($) {
 	        			window.location = window.location.href;
 	        		}
         			popup.popmake('close');
-        			$("#manage_business_benefits > div table tbody").append(respond.row);
-        			$("#manage_business_benefits > div table tbody tr:nth-last-child(2)").children("td:first-child").children('a').click(deleteAddBenefit);
+        			$("#a3 > div table tbody").append(respond.row);
+        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:first-child").children('a').click(deleteAddBenefit);
 
-        			$("#manage_business_benefits > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".benefitStatusAction").click(updateBenefitStatus);
-        			$("#manage_business_benefits > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".popmake-edit-additional-benefit").click(editPopup);
-        			$("#manage_business_benefits > div table tbody tr:nth-last-child(2)").find(".ben-title").click(openDescription);
+        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".benefitStatusAction").click(updateBenefitStatus);
+        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".popmake-edit-additional-benefit").click(editPopup);
+        			$("#a3 > div table tbody tr:nth-last-child(2)").find(".ben-title").click(openDescription);
         		}
         		
         	}
@@ -717,13 +739,14 @@ jQuery(document).ready(function($) {
         			row.find("td:nth-child(3)").find(".ben-title").text(benefitTitle);
         			row.next().find(".desc").text(benefitDesc);
         			$("#popmake-412").popmake('close');
+                                window.location.reload();
         	}
 		});
 	});
 
 	$(".benefitStatusAction").click(updateBenefitStatus);
 
-	$("#manage_business_benefits .ben-title").click(openDescription);
+	$("#a3 .ben-title").click(openDescription);
 
 	$("#accordion-4 table .content .details").click(openDescription);
 
@@ -844,8 +867,8 @@ function editMessage(){
 	window.messRow = row;
 	var message = row.children("td:nth-child(3)").text();
 	var matches = row.find("span.matches").text();
+        console.log(matches);
 	var target = row.find("span.target").text();
-	console.log(target);
 	var meters = row.find("span.meters").text();
 	var id = button.attr("rel");
 	jQuery("#gform_submit_button_15").attr('data-id', id);
@@ -860,7 +883,15 @@ function editMessage(){
 	var endtDate = row.children("td:nth-child(5)").text().split(' ');
 	endtDate = endtDate[0]+' 00:00:00';
 	var number = row.children("td:nth-child(7)").text();
+        popup.find("option").each(function(){
+		if(jQuery(this).val() === matches){
+			jQuery(this).attr("checked", "checked");
+			jQuery(this).parent('select').val(matches)
+		} else {
+			jQuery(this).removeAttr("checked");
+		}
 
+	});
 	popup.find("textarea").val(message).attr("disabled", "disabled");
 	popup.find("select").attr("disabled", "disabled");
 	popup.find("input").each(function(){
@@ -881,12 +912,7 @@ function editMessage(){
 	});
 	jQuery("#input_15_5").val(startDate);
 
-	popup.find("option").each(function(){
-		if(jQuery(this).val() == matches){
-			jQuery(this).attr("checked", "checked");
-		}
-
-	});
+	
 	
 
 	popup.popmake("open");
@@ -1343,8 +1369,15 @@ function deleteAddBenefit(e) {
 }
 
 function updateBenefitStatus (e) {
-	e.preventDefault();
+	e.preventDefault();       
 	var currentStatus = jQuery(this).html();
+        if(currentStatus==='Stop'){
+            var res = confirm('Are you sure? Business without a main benefit is not visible in the site');
+            if(!res){
+                return false;
+            }
+        }
+
 	var benefitId = jQuery(this).attr("rel");
 	var button = jQuery(this);
 	var td = button.parent().siblings("td:nth-child(2)");
@@ -1398,12 +1431,16 @@ function updateBenefitStatus (e) {
 
 function editPopup(e) {
 	e.preventDefault();
+        if(jQuery("#field_14_3 > .image-preview").length){
+            jQuery("#field_14_3 .image-preview").remove();
+        }
 	var benefitId = jQuery(this).attr("rel");
 	var details = jQuery(this).parents("tr").find("td:nth-child(3)").children(".ben-title").text();
 	var desc = jQuery(this).parents("tr").find("td:nth-child(3)").children(".ben-desc").text();
 	var date = jQuery(this).parents("tr").find("td:nth-child(5)").text();
 	var area = jQuery(this).parents("tr").find("td:nth-child(6)").text();
-	if(area != 'All MCC Holders'){
+        var img = jQuery(this).parents("tr").next().find("img").attr('src');
+	if(area != 'All MyCityCard holders'){
 		jQuery("#input_14_5 option:nth-child(2)").attr("selected", "selected");
 	}else{
 		jQuery("#input_14_5 option:nth-child(1)").attr("selected", "selected");
@@ -1415,6 +1452,7 @@ function editPopup(e) {
 	jQuery("#input_14_4").val(date);
 	jQuery("#field_14_6 input").val(benefitId);
 	jQuery("#field_14_6 input").val(benefitId);
+	jQuery("#field_14_3").append("<div class='image-preview'><img style='width:100px' src='"+img+"' ></div>");
 }
 
 function openDescription(){
