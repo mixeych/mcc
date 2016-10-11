@@ -175,8 +175,7 @@ if(!class_exists('MCCTranzillaPayment')){
                 $poststring .= $key . "=" . $val . "&";
             }
             $poststring = htmlentities(substr($poststring, 0, -1));
-            var_dump($poststring);
-            die();
+
             $answer = $this->sendTransaction ($poststring);
             if(!$answer){
                 return false;
