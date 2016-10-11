@@ -18,10 +18,10 @@ if(!class_exists('MCCTranzillaPayment')){
                 $this->terminalName = $val['input'];
             }
             
-            $val = get_option('tranzilla_password');
-            if($val){
-                $this->password = $val['input'];
-            }
+//            $val = get_option('tranzilla_password');
+//            if($val){
+//                $this->password = $val['input'];
+//            }
             $val = get_option('token_login');
             if($val){
                 $this->tokenLogin = $val['input'];
@@ -54,9 +54,8 @@ if(!class_exists('MCCTranzillaPayment')){
             return $result;
         }
         
-        public function sendRecurringPayment()
+        public function sendRecurringPayment($current_user)
         {
-            global $current_user;
             if(empty($this->tranzillaInfo)||empty($this->tokenLogin)||empty($this->tokenPassword)){
                 return false;
             }
@@ -100,11 +99,15 @@ if(!class_exists('MCCTranzillaPayment')){
             $formdata['cred_type']=1;
             $formdata['product']='package';
             $formdata['MCCUserID']=$current_user->ID;
+            $formdata['email']=$current_user->user_email;
+            $formdata['contact']=$current_user->display_name;
+            $formdata['myid'] = $this->tranzillaInfo['id'];
             $poststring = '';
             foreach($formdata AS $key => $val){
                 $poststring .= $key . "=" . $val . "&";
             }
-            $poststring = substr($poststring, 0, -1);
+            $poststring = htmlentities(substr($poststring, 0, -1));
+            
             $answer = $this->sendTransaction ($poststring);
             if(!$answer){
                 return false;
@@ -162,10 +165,18 @@ if(!class_exists('MCCTranzillaPayment')){
             $formdata['cred_type']=1;
             $formdata['product']='messages';
             $formdata['MCCUserID']=$current_user->ID;
+            $formdata['email']=$current_user->user_email;
+            $formdata['contact']=$current_user->display_name;
+            $formdata['myid'] = $this->tranzillaInfo['id'];
+
+            $poststring = '';
             foreach($formdata AS $key => $val){
+                
                 $poststring .= $key . "=" . $val . "&";
             }
-            $poststring = substr($poststring, 0, -1);
+            $poststring = htmlentities(substr($poststring, 0, -1));
+            var_dump($poststring);
+            die();
             $answer = $this->sendTransaction ($poststring);
             if(!$answer){
                 return false;
