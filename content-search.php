@@ -7,7 +7,8 @@
  * @package mycitycard
  */
 global $current_user;
-
+global $sitepress;
+$currentLanguage = $sitepress->get_current_language();
 $city = 'all';
 if(isset($_SESSION["my_cityz"]) && $_SESSION["my_cityz"] != 'All'){
     $city = (int) $_SESSION["my_cityz"];
@@ -30,7 +31,10 @@ $bCity = get_field("bcity", $bizId);
 		$posTitle = strripos($benefitTile, $search);
 		$posDesc = strripos($benefitContent, $search);
 		$areaText = get_sub_field('area');
-
+                $link = get_permalink();
+                if($currentLanguage == 'he'){
+                    $link = str_replace('/business/', '/he/business/', $link);
+                }
 		if(get_sub_field('benefit_status') == 1 && ($posTitle !== false || $posDesc !==false)) {
 
 			if($city !='all' && $areaText != 'All MyCityCard holders' && $bCity != $city){
@@ -52,7 +56,7 @@ $bCity = get_field("bcity", $bizId);
 			
 			
 	?>
-	<a href="<?php the_permalink() ?>">
+	<a href="<?php echo $link ?>">
 		<div class="business_page_benefit">
 			<div class="business_page_benefit_discount"><img src="<? echo get_sub_field('benefit_image')["url"];?>" /></div>
 			<div class="business_page_benefit_details">

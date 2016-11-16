@@ -272,7 +272,7 @@ $lang = get_bloginfo('language');
 								if($current_language == "en") { ?>
 									<input type="search" class="search-field" placeholder="<?php echo esc_attr_x( 'Which benefit are you looking for?', 'placeholder' ) ?>" value="<?php echo get_search_query() ?>" name="s" title="<?php echo esc_attr_x( 'Search for:', 'label' ) ?>" />
 							<?php } elseif($current_language == "he") { ?>
-									<input type="search" class="search-field" placeholder="<?php echo esc_attr_x( 'איזה עסק אתה מחפש ?', 'placeholder' ) ?>" value="<?php echo get_search_query() ?>" name="s" title="<?php echo esc_attr_x( 'Search for:', 'label' ) ?>" />
+									<input type="search" class="search-field" placeholder="<?php echo esc_attr_x( 'חיפוש הטבות', 'placeholder' ) ?>" value="<?php echo get_search_query() ?>" name="s" title="<?php echo esc_attr_x( 'Search for:', 'label' ) ?>" />
 							<?php } ?>
 						</label>
 						<input type="submit" class="search-submit" value="<?php echo esc_attr_x( 'Search', 'submit button' ) ?>" />

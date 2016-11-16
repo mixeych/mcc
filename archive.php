@@ -7,6 +7,8 @@
  * @package mycitycard
  */
 global $wpdb;
+global $sitepress;
+$currentLanguage = $sitepress->get_current_language();
 get_header(); ?>
 	<div class="container">
 
@@ -37,6 +39,9 @@ get_header(); ?>
             	foreach($res as $row):
 	                $res = (int) $row->business_id;
 	                $promoLink = get_permalink($res);
+                        if($currentLanguage == 'he'){
+                            $promoLink = str_replace('/business/', '/he/business/', $promoLink);
+                        }
 	                $promoTitle = get_the_title($res);
 	                $promoLogo = get_field("logo", $res);
 	                if(is_numeric($promoLogo)){

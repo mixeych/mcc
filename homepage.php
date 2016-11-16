@@ -30,6 +30,9 @@ $currentLanguage = $sitepress->get_current_language();
             if(!empty($res)):
                 $res = (int) $res;
                 $promoLink = get_permalink($res);
+                if($currentLanguage == 'he'){
+                    $promoLink = str_replace('/business/', '/he/business/', $promoLink);
+                }
                 $promoTitle = get_the_title($res);
                 $promoLogo = get_field("logo", $res);
                 if(is_numeric($promoLogo)){
