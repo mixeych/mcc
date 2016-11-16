@@ -10,9 +10,11 @@ if(!class_exists('MCCTranzillaPayment')){
         private $tokenPassword = '';
         private $tranzillaInfo = array();
         
-        public function __construct()
+        public function __construct($current_user = null)
         {
-            global $current_user;
+            if(!$current_user){
+                global $current_user;
+            }
             $val = get_option('tranzilla_terminal_name');
             if($val){
                 $this->terminalName = $val['input'];
@@ -59,19 +61,12 @@ if(!class_exists('MCCTranzillaPayment')){
             if(empty($this->tranzillaInfo)||empty($this->tokenLogin)||empty($this->tokenPassword)){
                 return false;
             }
-            $currentTime = time();
             $args = array(
                 'author' => $current_user->ID,
                 'posts_per_page'   => 1,
                 'post_type'        => 'business'
             );
             update_field("business_pack", "Free", $business->ID);
-            if(!isset($this->tranzillaInfo['nextPaymentDate'])||empty($this->tranzillaInfo['nextPaymentDate'])){
-                return false;
-            }
-           if($currentTime < $this->tranzillaInfo['nextPaymentDate']){
-                return false;
-           }
             
             $args = array(
                 'author' => $current_user->ID,
@@ -81,14 +76,14 @@ if(!class_exists('MCCTranzillaPayment')){
             $business = get_posts( $args );
             $business = $business[0];
             
-            if(isset($this->tranzillaInfo['downgrade'])&&$this->tranzillaInfo['downgrade'] === 'basic'){
-                $currentPack = 'Basic';
-            }else{
-                $currentPack = get_field("business_pack", $business->ID);
-            }
-            if(empty($this->tranzillaInfo['token'])){
-                return false;
-            }
+//            if(isset($this->tranzillaInfo['downgrade'])&&$this->tranzillaInfo['downgrade'] === 'basic'){
+//                $currentPack = 'Basic';
+//            }else{
+//                $currentPack = get_field("business_pack", $business->ID);
+//            }
+//            if(empty($this->tranzillaInfo['token'])){
+//                return false;
+//            }
             $formdata = array();
             $formdata['supplier']=$this->tokenLogin; 
             $formdata['TranzilaPW']=$this->tokenPassword; 
@@ -107,13 +102,17 @@ if(!class_exists('MCCTranzillaPayment')){
                 $poststring .= $key . "=" . $val . "&";
             }
             $poststring = htmlentities(substr($poststring, 0, -1));
-            
+
             $answer = $this->sendTransaction ($poststring);
             if(!$answer){
                 return false;
             }
+
+            if(strpos($answer, 'Response=000') !== 0){
+                return false;
+            }
             
-            return $answer;
+            return true;
         }
         
         private function premiumYearUserUpdate(){
@@ -175,12 +174,15 @@ if(!class_exists('MCCTranzillaPayment')){
                 $poststring .= $key . "=" . $val . "&";
             }
             $poststring = htmlentities(substr($poststring, 0, -1));
-
             $answer = $this->sendTransaction ($poststring);
             if(!$answer){
                 return false;
             }
-            return $answer;
+            if(strpos($answer, 'Response=000') !== 0){
+                return false;
+            }
+
+            return true;
         }
     }
 }

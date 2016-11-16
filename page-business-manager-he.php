@@ -17,22 +17,22 @@ get_header();
 
 global $current_user;
 $args = array(
-	'author' => $current_user->ID,
-	'posts_per_page'   => 1,
-	'offset'           => 0,
-	'category'         => '',
-	'category_name'    => '',
-	'orderby'          => 'date',
-	'order'            => 'DESC',
-	'include'          => '',
-	'exclude'          => '',
-	'meta_key'         => '',
-	'meta_value'       => '',
-	'post_type'        => 'business',
-	'post_mime_type'   => '',
-	'post_parent'      => '',
-	'post_status'      => 'publish',
-	'suppress_filters' => true 
+    'author' => $current_user->ID,
+    'posts_per_page'   => 1,
+    'offset'           => 0,
+    'category'         => '',
+    'category_name'    => '',
+    'orderby'          => 'date',
+    'order'            => 'DESC',
+    'include'          => '',
+    'exclude'          => '',
+    'meta_key'         => '',
+    'meta_value'       => '',
+    'post_type'        => 'business',
+    'post_mime_type'   => '',
+    'post_parent'      => '',
+    'post_status'      => 'publish',
+    'suppress_filters' => true 
 );
 
 
@@ -40,6 +40,7 @@ $business = get_posts( $args );
 $benefitStatus;
 $business_pack = get_field("business_pack", $business[0]->ID);
 $post_term = wp_get_post_terms($business[0]->ID, 'business_cat');
+
 $postTermId = $post_term[0]->term_id;
 $logo = get_field("field_554775b13e29f", $business[0]->ID);
 $ltd = get_field("field_5547749c3e294", $business[0]->ID);
@@ -127,8 +128,13 @@ if(empty($isActive)){
 				<div id="accordion-1" class="accordion-section-content" data-bizrole="<?=$business_role ?>">
 					<div class="accordion-section-padding">
 						<?php echo do_shortcode("[gravityform id=2 title=false description=false ajax=true field_values='business_name={$business[0]->post_title}&ltd={$ltd}&first_name={$first_name}&last_name={$last_name}&phone={$phone}&address={$address}&email={$email}&business_role={$business_role}&business_phone={$phone}&business_phone_2={$business_phone_2}&short_desc={$short_desc}']"); ?>
-						<label class="main-logo" data-logo="<?php if(!empty($logo)){ echo "1"; }else{ echo "0"; } ?>" >לוגו<input type="file" ></label>
-						<a href="<?php echo get_permalink($business[0]->ID); ?>" target="_blank" id="preview_business_page">צפה בדף העסק</a>
+                                                <label class="main-logo" data-logo="<?php if(!empty($logo)){ echo "1"; }else{ echo "0"; } ?>" >Logo<input type="file" ></label>
+                                                <?php 
+                                                
+                                                $previewLink = get_permalink($business[0]->ID);
+                                                $previewLink = str_replace( site_url().'/', home_url(), $previewLink);
+                                                ?>
+						<a href="<?php echo $previewLink ?>" target="_blank" id="preview_business_page">צפה בדף העסק</a>
 						<?php 
 								$cityId = get_user_meta($current_user->ID, 'city', true);
 								$city = get_post($cityId);
@@ -147,7 +153,7 @@ if(empty($isActive)){
 				<div id="accordion-2" class="accordion-section-content" <?php if(isset($_COOKIE['active']) && ($_COOKIE['active'] == 3||$_COOKIE['active']==10)){echo 'style="display:block"';} ?> data-category="<?php if(empty($post_term)){echo "0";}else{echo "1";} ?>">
 					<div class="accordion-section-padding">
 						<?php 
-							if($business_pack == 'Premium') { 
+							if($business_pack == 'Basic'||$business_pack == 'Premium') { 
 								echo do_shortcode('[gravityform id=10 title=false description=false ajax=true]');
 							} else {
 								echo do_shortcode('[gravityform id=3 title=false description=false ajax=true]');
@@ -220,7 +226,7 @@ if(empty($isActive)){
 												<span class="add-photo-remove" data-id="1" data-biz="<?php echo $business[0]->ID ?>" >remove</span>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button general-button" rel="photo_1">Upload Photo #1</div>
+												<div class="add_cover_photo_button general-button" rel="photo_1">1# העלה תמונה</div>
 												<input type="file" id="photo_1" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" />
 											<?php endif; ?>
 										</div>
@@ -241,7 +247,7 @@ if(empty($isActive)){
 												<span class="add-photo-remove" data-id="2" data-biz="<?php echo $business[0]->ID ?>">remove</span>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button general-button" rel="photo_2">Upload Photo #2</div>
+												<div class="add_cover_photo_button general-button" rel="photo_2">2# העלה תמונה</div>
 												<input type="file" id="photo_2" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" />
 											<?php endif; ?>
 										</div>
@@ -262,7 +268,7 @@ if(empty($isActive)){
 												<span class="add-photo-remove" data-id="3" data-biz="<?php echo $business[0]->ID ?>">remove</span>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button general-button" rel="photo_3">Upload Photo #3</div>
+												<div class="add_cover_photo_button general-button" rel="photo_3">3# העלה תמונה</div>
 												<input type="file" id="photo_3" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" />
 											<?php endif; ?>
 										</div>
@@ -283,7 +289,7 @@ if(empty($isActive)){
 												<span class="add-photo-remove" data-id="4" data-biz="<?php echo $business[0]->ID ?>">remove</span>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button general-button" rel="photo_4">Upload Photo #4</div>
+												<div class="add_cover_photo_button general-button" rel="photo_4">4# העלה תמונה</div>
 												<input type="file" id="photo_4" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" />
 											<?php endif; ?>
 										</div>
@@ -295,7 +301,7 @@ if(empty($isActive)){
 						
 							<div class="accordion-section-padding">
 								<div class="warning">
-									You should upgrade your account to unlock this section
+									שדרג כעת את המשתמש שלך בכדי להעלות תמונות נוספות
 								</div>
 
 								<div id="add_cover_photo">
@@ -309,7 +315,7 @@ if(empty($isActive)){
 												<a href="<?=$photo_1["url"]?>" target="_blank">Click HERE to preview Photo #1</a>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button" rel="photo_1">Upload Photo #1</div>
+												<div class="add_cover_photo_button" rel="photo_1">1# העלה תמונה</div>
 												<input type="file" id="photo_1" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" disabled="disabled"/>
 											<?php endif; ?>
 										</div>
@@ -322,7 +328,7 @@ if(empty($isActive)){
 												<a href="<?=$photo_2["url"]?>" target="_blank">Click HERE to preview Photo #2</a>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button" rel="photo_2">Upload Photo #2</div>
+												<div class="add_cover_photo_button" rel="photo_2">2# העלה תמונה</div>
 												<input type="file" id="photo_2" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" disabled="disabled"/>
 											<?php endif; ?>
 										</div>
@@ -335,7 +341,7 @@ if(empty($isActive)){
 												<a href="<?=$photo_3["url"]?>" target="_blank">Click HERE to preview Photo #3</a>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button" rel="photo_3">Upload Photo #3</div>
+												<div class="add_cover_photo_button" rel="photo_3">3# העלה תמונה</div>
 												<input type="file" id="photo_3" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" disabled="disabled"/>
 											<?php endif; ?>
 										</div>
@@ -348,7 +354,7 @@ if(empty($isActive)){
 												<a href="<?=$photo_4["url"]?>" target="_blank">Click HERE to preview Photo #4</a>
 												
 											<?php else: ?>
-												<div class="add_cover_photo_button" rel="photo_4">Upload Photo #4</div>
+												<div class="add_cover_photo_button" rel="photo_4">4# העלה תמונה</div>
 												<input type="file" id="photo_4" name="file" rel="<?=$business[0]->ID?>" style="display:none" class="business_gallery_img" disabled="disabled"/>
 											<?php endif; ?>
 										</div>
@@ -356,8 +362,7 @@ if(empty($isActive)){
 								</div>
 								<div class="more-photos-box">
 									<a href="<?php echo home_url('/payment/') ?>">
-										More photos bring more clients.
-										Upgrade to Premium Now!
+										יותר תמונות מושך יותר לקוחות. שדרג לפרמיום כעת!
 									</a>
 								</div>
 							</div>
@@ -378,9 +383,9 @@ if(empty($isActive)){
 											if($homepage)
 												$HPval = $homepage;
 											else
-												$HPval = "http://";
+												$HPval = "";
 										?>
-										<input type="text" id="homepage_preview"  value="<?php echo $HPval; ?>" /><button id="homepage_preview_button">	תצוגה מקדימה</button>
+										<input type="text" id="homepage_preview" placeholder="http://" value="<?php echo $HPval; ?>" /><button id="homepage_preview_button">	תצוגה מקדימה</button>
 									</div>
 									<div class="manage_business_links_row">
 										<span>פייסבוק</span>
@@ -389,9 +394,9 @@ if(empty($isActive)){
 											if($facebook_page)
 												$FBval = $facebook_page;
 											else
-												$FBval = "http://";
+												$FBval = "";
 										?>
-										<input type="text" id="facebook_preview" value="<?php echo $FBval; ?>" /><button id="facebook_preview_button">תצוגה מקדימה</button>
+										<input type="text" id="facebook_preview" placeholder="http://" value="<?php echo $FBval; ?>" /><button id="facebook_preview_button">תצוגה מקדימה</button>
 									</div>
 									<input type="submit" value="שמור שינויים" id="links_update" />
 								</form>
@@ -500,7 +505,7 @@ if(empty($isActive)){
 								</form>
 							</div>-->
 						</div>
-						<a href="<?php echo get_permalink($business[0]->ID); ?>" target="_blank" id="preview_business_page">צפה בדף העסק</a>
+						<a href="<?php echo $previewLink ?>" target="_blank" id="preview_business_page">צפה בדף העסק</a>
 					</div>
 				</div>
 			</div>
@@ -618,7 +623,7 @@ if(empty($isActive)){
 							if($business_pack == 'Premium' && !empty($benefitId)): 
 							?>
 
-							<div>
+							<div class='additional-benefits'>
 								<h2>הטבות נוספות</h2>
                                                             <div class="table-responsive">
 								<table class="additional table">
@@ -1164,7 +1169,7 @@ if(empty($isActive)){
 						var reader = new FileReader();
 
 						reader.onload = function (e) {
-							$('#logo_preview img').attr('src', e.target.result);
+							$('.logo_preview img').attr('src', e.target.result);
 						}
 
 						reader.readAsDataURL(input.files[0]);
@@ -1172,6 +1177,9 @@ if(empty($isActive)){
 					}
 
 					$("#input_2_10").change(function(){
+						readURL(this);
+					})
+                                        $(".main-logo input").change(function(){
 						readURL(this);
 					})
 				});

@@ -10,6 +10,26 @@ jQuery(document).bind('gform_confirmation_loaded', function(event, formId){
 });
 
 jQuery(document).ready(function($) {
+    $('.buy-messages').click(function(e){
+        e.preventDefault();
+        var mess = $(this).siblings('input[name=messages]').val();
+        $.ajax({
+            url: ajaxurl,
+            method: 'post',
+            data:{
+                action: 'buyMessages',
+                mess: mess
+            },
+            dataType: 'json',
+            success: function(res){
+                if(res.success){
+                    alert('done!');
+                    window.location.href = res.redirect;
+                }
+            }
+        });
+    })
+    
     
     jQuery(".custom-popup .popup-close").click(function(){
         window.location.reload();
@@ -25,29 +45,31 @@ jQuery(document).ready(function($) {
                 });
         
                 $.ajax({
-			url: ajaxurl+"?action=getSubCat",
-			type: 'GET',
-			dataType: 'json',
-			success: function(data){
-                                if(data.success){
-                                        var res = data.result;
-                                        if(res.length>0){
-                                                var inputs = $("#gform_fields_10").find(".sub_categ_premium");
-                                                
-                                                for (var i = 0; i<res.length; i++){
-                                                        $(inputs[i]).find("select option").each(function(){
-
-                                                                var val = $(this).val();
-                                                                if(val == res[i]){
-
-                                                                        $(this).attr("selected", "selected");
-                                                                }
-                                                        });
-
-                                                }
-                                        }
+                    url: ajaxurl+"?action=getSubCat",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data){
+                        if(data.success){
+                            var res = data.result;
+                            if(res.length>0){
+                                var inputs = $("#gform_fields_10").find(".sub_categ_premium");
+                                if(!inputs.length){
+                                    inputs = $('#gform_fields_3 .allowed_select_sub_cat');
                                 }
-			}
+                                for (var i = 0; i<res.length; i++){
+                                    $(inputs[i]).find("select option").each(function(){
+
+                                        var val = $(this).val();
+                                        if(val == res[i]){
+
+                                                $(this).attr("selected", "selected");
+                                        }
+                                    });
+
+                                }
+                            }
+                        }
+                    }
 		})
 	}
 
@@ -162,8 +184,6 @@ jQuery(document).ready(function($) {
             e.preventDefault();
             var index = $(".table-pyment .by-package td").index($(this).parent("td"));
             var price = $(".table-pyment .price-table td").eq(index).find("span.price").text();
-            console.log(index);
-            console.log(price);
             if($(".message-popup").length){
                 var number = parseFloat($(".table-pyment .messages-table td").eq(index).text());
                 number *= 1000;
@@ -245,12 +265,12 @@ jQuery(document).ready(function($) {
         			alert("Your logo has been updated successfully");
         			$('#ModalLoadBackground').modal('hide');
         			if(logoData == 0){
-        				$(".main-logo").attr("data-logo", "1");
+                                    $(".main-logo").attr("data-logo", "1");
         			}
         			var title=button.parents(".accordion-section").find(".accordion-section-title");
         			if(title.hasClass("err") && photoData != 0 && categoryData != 0){
-						title.removeClass("err");
-					}
+                                    title.removeClass("err");
+                                }
         		}
         	}
 		});
@@ -693,12 +713,12 @@ jQuery(document).ready(function($) {
 	        			window.location = window.location.href;
 	        		}
         			popup.popmake('close');
-        			$("#a3 > div table tbody").append(respond.row);
-        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:first-child").children('a').click(deleteAddBenefit);
+        			$("#a3 .additional-benefits table tbody").append(respond.row);
+        			$("#a3 .additional-benefits  table tbody tr:nth-last-child(2)").children("td:first-child").children('a').click(deleteAddBenefit);
 
-        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".benefitStatusAction").click(updateBenefitStatus);
-        			$("#a3 > div table tbody tr:nth-last-child(2)").children("td:last-child").children(".popmake-edit-additional-benefit").click(editPopup);
-        			$("#a3 > div table tbody tr:nth-last-child(2)").find(".ben-title").click(openDescription);
+        			$("#a3 .additional-benefits table tbody tr:nth-last-child(2)").children("td:last-child").children(".benefitStatusAction").click(updateBenefitStatus);
+        			$("#a3 .additional-benefits table tbody tr:nth-last-child(2)").children("td:last-child").children(".popmake-edit-additional-benefit").click(editPopup);
+        			$("#a3 .additional-benefits table tbody tr:nth-last-child(2)").find(".ben-title").click(openDescription);
         		}
         		
         	}

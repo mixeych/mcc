@@ -213,6 +213,7 @@ function initMap() {
 			</div>
 			<div class="business_page_info_more_details">
 				<p><?=get_field("field_5547753a3e298", $post_id);?></p>
+                                <p><?php echo get_field("business_phone_2", $post_id); ?></p>
 				<p class="ohours">
 				<?php
 					$opening_hours = get_field("opening_hours", $post_id);

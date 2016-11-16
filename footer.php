@@ -17,7 +17,15 @@ $current_language = $sitepress->get_current_language();
 		<div class="container clearfix">
 			<div class="container-inner clearfix ">
 				<div class="categories-box ">
+				 <?php 
+                                    global $sitepress;
+                                    $current_language = $sitepress->get_current_language();
+                                    if($current_language === 'en'): 
+                                    ?>
 					<h5>Categories</h5>
+					<?php else: ?>
+                                   <h5>קטגוריות</h5>
+                                    <?php endif; ?>
 					<?php  
 						$args = array('type' => 'business', 'parent' => 0, 'taxonomy' => 'business_cat', 'hide_empty' => 0, 'orderby' => 'name', 'order' => 'ASC');
 						$categories = get_categories($args);
@@ -40,18 +48,21 @@ $current_language = $sitepress->get_current_language();
 					?>
 				</div>
 				<div class="more-box">
-					<h5>More</h5>
-					<ul>
-                                    <?php 
+				 <?php 
                                     global $sitepress;
                                     $current_language = $sitepress->get_current_language();
                                     if($current_language === 'en'): 
                                     ?>
+					<h5>More</h5>
+					<ul>
+                                   
 										<li><a href="<?php echo get_permalink(1753) ?>">About</a></li>
 										<!-- <li><a href="<?php echo get_permalink(1755) ?>">Help</a></li> -->
 										<li><a href="<?php echo get_permalink(1757) ?>">Contact Us</a></li>
 					
                                     <?php else: ?>
+                                    	<h5>עוד</h5>
+					<ul>	
                                         <li><a href="<?php echo get_permalink(1753) ?>">אודות</a></li>
 									<!-- 	<li><a href="<?php echo get_permalink(1755) ?>">Help</a></li> -->
 										<li><a href="<?php echo get_permalink(1757) ?>">צור קשר</a></li>
@@ -89,16 +100,19 @@ $current_language = $sitepress->get_current_language();
 					<li><a href="#" class="popmake-business-registration">I’m a Business owner</a></li>
 					</ul>
 					<?php endif; ?>
-					<h5>Work with Us</h5>
-					<ul>
-								<?php 
+					<?php 
                                     global $sitepress;
                                     $current_language = $sitepress->get_current_language();
                                     if($current_language === 'en'): 
                                     ?>
+					<h5>Work with Us</h5>
+					<ul>
+								
 										<li><a href="#">Become a city owner!</a></li>
 					
                                     <?php else: ?>
+                                    	<h5>עבוד איתנו</h5>
+					<ul>
                                  	 <li><a href="#">הפוך לראש עיר</a></li>
                                     <?php endif; ?>
 						

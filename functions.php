@@ -509,14 +509,15 @@ function get_businesses_cats( $form ) {
 
             $field->choices = array();
             foreach($categories as $post) {
+                
+                $iclId = icl_object_id($post->term_id, 'business_cat', true, 'en');		
                 $select = '';
                 if($business_cats){
-                        foreach($business_cats as $bcat) {
-                                if($post->term_id == $bcat->term_id)
-                                        $select = 1;
-                        }
+                    foreach($business_cats as $bcat) {
+                        if($iclId == $bcat->term_id)
+                                $select = 1;
+                    }
                 }
-                $iclId = icl_object_id($post->term_id, 'business_cat', true, 'en');				
                 $field->choices[] = array( 'text' => $post->name, 'value' => $iclId, 'isSelected' => $select );
             }
 
@@ -588,7 +589,7 @@ function get_businesses_cats( $form ) {
 
                     $iclId = icl_object_id($cat->term_id, 'business_cat', true, 'en');
 
-                    $field->choices[] = array( 'text' => $cat->name, 'value' => $cat->term_id, 'isSelected' => $select );
+                    $field->choices[] = array( 'text' => $cat->name, 'value' => $iclId, 'isSelected' => $select );
 
                 }
             }
@@ -3133,7 +3134,10 @@ function side_categories() {
 				}
 				$b = new WP_Query($args);
 				$countSub = $b->found_posts;
-				$subCatsHTML .= '<li class="'.$thisSCat.'"><a href="' .get_term_link($sCat). '"> - ' .$sCat->name. ' ('.$countSub.')</a></li>';
+                                if($countSub>0){
+                                    $subCatsHTML .= '<li class="'.$thisSCat.'"><a href="' .get_term_link($sCat). '"> - ' .$sCat->name. ' ('.$countSub.')</a></li>';
+                                }
+				
 			}
 			$term_id = (int) $iclId;
 			$link = get_term_link($term_id, 'business_cat');
@@ -3161,7 +3165,6 @@ function side_categories() {
 		wp_reset_query();
 		
 	}
-	
 	
 	echo '<ul id="menu-side-menu">' .$catsHTML. '</ul>';
 }
@@ -4412,22 +4415,23 @@ function edit_main_benefit(){
 */
 
 function is_biz_now_open($bizId){
-        $timestamp = time();
+        $timezone = get_option('timezone_string');
+        $date = new DateTime(null,  new DateTimeZone($timezone));
 	$opening_hours = get_field("opening_hours", $bizId);
 	if(empty($opening_hours)){
-		return false;
+            return false;
 	}
 
-	$currentDay = date('l', $timestamp);
+	$currentDay = $date->format('l');
 	foreach($opening_hours as $open){
-		if($currentDay == $open['day']){
-			$currTime = (int) date('H', $timestamp);
-			$start = (int) $open['start'];
-			$end = (int) $open['end'];
-			if($currTime >= $start && $currTime <= $end){
-				return true;
-			}
-		}
+            if($currentDay == $open['day']){
+                (int) $currTime = $date->format('H');
+                $start = (int) $open['start'];
+                $end = (int) $open['end'];
+                if($currTime >= $start && $currTime < $end){
+                    return true;
+                }
+            }
 	}
 	return false;
 
@@ -4506,31 +4510,17 @@ function addUserLoginTime( $user_login, $user ) {
 }
 add_action('wp_login', 'addUserLoginTime', 10, 2);
 
-add_action('sendRecurringPayment', 'checkPaymentDate', 10, 1);
-function checkPaymentDate($userId){
+add_action('init', 'checkPackageExpiration');
+function checkPackageExpiration(){
     if (defined('DOING_AJAX') && DOING_AJAX) {
         return;
     }
-    
     if(is_page(4566)){
         return;
     }
-    if(!$userId){
-        return;
-    }
-    $current_user = get_user_by('id', $userId);
-    if(in_array('subscriber', $current_user->roles)){
-        return;
-    }
-    if(!class_exists('MCCTranzillaPayment')){
-        return;
-    }
-    $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
-    if(empty($tranzillaInfo)){
-        return;
-    }
-    
     $currentTime = time();
+    global $current_user;
+    $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
     if(!isset($tranzillaInfo['nextPaymentDate'])||empty($tranzillaInfo['nextPaymentDate'])){
         return;
     }
@@ -4544,13 +4534,50 @@ function checkPaymentDate($userId){
     );
     $business = get_posts( $args ); 
     $business = $business[0];
+    if($tranzillaInfo['business_pack'] == 'premium_year'){
+        if($currentTime >= $tranzillaInfo['paymentYear']){
+            $tranzillaInfo = array();
+            update_user_meta($current_user->ID, 'tranzillaInfo', '');
+            update_field("business_pack", "Free", $business->ID);
+            return;
+        }
+        
+    }
+    $tranzillaInfo = array();
+    update_user_meta($current_user->ID, 'tranzillaInfo', '');
+    update_field("business_pack", "Free", $business->ID);
+    return;
+}
+
+add_action('sendRecurringPayment', 'checkPaymentDate', 10, 1);
+function checkPaymentDate($userId){
+    if(!$userId){
+        return;
+    }
+    $current_user = get_user_by('id', $userId);
+    if(!class_exists('MCCTranzillaPayment')){
+        return;
+    }
+    $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
+    if(empty($tranzillaInfo)){
+        return;
+    }
+    
+    $args = array(
+        'author' => $current_user->ID,
+        'posts_per_page'   => 1,
+        'post_type'        => 'business'
+    );
+    $business = get_posts( $args ); 
+    $business = $business[0];
     if(isset($tranzillaInfo['stopPaying'])&&true===$tranzillaInfo['stopPaying']){
         $tranzillaInfo = array();
         update_field("business_pack", "Free", $business->ID);
         update_user_meta($current_user->ID, 'tranzillaInfo', '');
         return;
     }
-    if($tranzillaInfo['business_pack'] == 'premium_year'){
+    if($tranzillaInfo['business_pack']== 'premium_year'){
+        $currentTime = time();
         if($currentTime >= $tranzillaInfo['paymentYear']){
             $tranzillaInfo = array();
             update_user_meta($current_user->ID, 'tranzillaInfo', '');
@@ -4561,14 +4588,90 @@ function checkPaymentDate($userId){
         $mesHave = $mesHave+1500;
         update_post_meta($business->ID, 'messages_have', $mesHave);
         $nextpaymentDate = $currentTime+2592000;
+        $argsSchedule = array($userId);
+        wp_schedule_single_event($nextpaymentDate, 'sendRecurringPayment', $argsSchedule);
         $tranzillaInfo['nextPaymentDate'] = $nextpaymentDate;
         $ser = serialize($tranzillaInfo);
         update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
         return;
     }
-    $tranz = new MCCTranzillaPayment();
+    $tranz = new MCCTranzillaPayment($current_user);
     $res = $tranz->sendRecurringPayment($current_user);
+    if(!$res){
+        $tranzillaInfo = array();
+        update_user_meta($current_user->ID, 'tranzillaInfo', '');
+        update_field("business_pack", "Free", $business->ID);
+        return;
+    }
+    $paymentDate = time();
+    $nextpaymentDate = $paymentDate+2592000;
+    $argsSchedule = array($current_user->ID);
+    wp_schedule_single_event($nextpaymentDate, 'sendRecurringPayment', $argsSchedule);
     return;
+}
+
+add_action('wp_ajax_buyMessages', 'MCCbuyMessages');
+function MCCbuyMessages(){
+    global $current_user;
+    $mess = $_POST['mess'];
+    $tranz = new MCCTranzillaPayment();
+    $res = $tranz->getMessages($mess);
+    if($res){
+        $args = array(
+            'author' => $current_user->ID,
+            'posts_per_page'   => 1,
+            'post_type'        => 'business'
+        );
+        $business = get_posts( $args ); 
+        $business = $business[0];
+        
+        $t1_price = '20';
+        $val = get_option('1000_messages');
+        if($val){
+            $t1_price = $val['input'];
+        }
+        $t2_price = '30';
+        $val = get_option('2000_messages');
+        if($val){
+            $t2_price = $val['input'];
+        }
+        $t5_price = '60';
+        $val = get_option('5000_messages');
+        if($val){
+            $t5_price = $val['input'];
+        }
+        $t10_price = '100';
+        $val = get_option('10000_messages');
+        if($val){
+            $t10_price = $val['input'];
+        }
+
+        switch($mess){
+            case $t1_price: 
+                $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                $mesHave = $mesHave+1000;
+                update_post_meta($business->ID, 'messages_have', $mesHave);
+                break;
+            case $t2_price: 
+                $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                $mesHave = $mesHave+2000;
+                update_post_meta($business->ID, 'messages_have', $mesHave);
+                break;
+            case $t5_price: 
+                $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                $mesHave = $mesHave+5000;
+                update_post_meta($business->ID, 'messages_have', $mesHave);
+                break;
+            case $t10_price: 
+                $mesHave = (int)get_post_meta($business->ID, 'messages_have', true);
+                $mesHave = $mesHave+10000;
+                update_post_meta($business->ID, 'messages_have', $mesHave);
+                break;
+        }
+    }
+    $redirect = home_url('payment');
+    echo json_encode(array('success' => $res, 'redirect' => $redirect));
+    die();
 }
 
 add_action('wp_ajax_stopPaying', 'MCCTranzillaStopPaying');

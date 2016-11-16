@@ -23,6 +23,7 @@ $business = get_posts( $args );
 $benefitStatus;
 $business_pack = get_field("business_pack", $business[0]->ID);
 $post_term = wp_get_post_terms($business[0]->ID, 'business_cat');
+
 $postTermId = $post_term[0]->term_id;
 if(empty($business_pack)) {
 	get_template_part("template", "packages-choice");
@@ -138,7 +139,7 @@ if(empty($business_pack)) {
 					<div id="accordion-2" class="accordion-section-content" <?php if(isset($_COOKIE['active']) && ($_COOKIE['active'] == 3||$_COOKIE['active']==10)){echo 'style="display:block"';} ?> data-category="<?php if(empty($post_term)){echo "0";}else{echo "1";} ?>">
 						<div class="accordion-section-padding">
 							<?php 
-								if($business_pack == 'Premium') { 
+								if($business_pack == 'Basic'||$business_pack == 'Premium') {
 									echo do_shortcode('[gravityform id=10 title=false description=false ajax=true]');
 								} else {
 									echo do_shortcode('[gravityform id=3 title=false description=false ajax=true]');
@@ -608,7 +609,7 @@ if(empty($business_pack)) {
 									$benefitId = get_post_meta($business[0]->ID, 'benefits_0_benefit_id', true);
 									if($business_pack == 'Premium' && !empty($benefitId)): 
 								?>
-								<div>
+								<div class='additional-benefits'>
 									<h2>Additional Benefits</h2>
                                                                     <div class="table-responsive">
 									<table class="additional table">

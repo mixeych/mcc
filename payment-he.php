@@ -1,13 +1,22 @@
 <?php
 /*
-* Template Name: Payment hebrew
+* Template Name: Payment Hebrew
 */
-check_user_auth();
-if($current_user->caps['subscriber']||!is_user_logged_in() ){
+global $current_user;
+if($_SERVER['REQUEST_METHOD'] == 'GET'){
+    check_user_auth();
+}
+if(is_user_logged_in()&&isset($current_user->caps['subscriber'])){
 	wp_redirect(home_url());
 }
+$sessStatus = session_status();
+if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
+    session_start();
+}
+$_SESSION['paymentPage'] = 1;
+global $sitepress;
 get_header(); 
-global $current_user;
+
 
 $args = array(
 	'author' => $current_user->ID,
@@ -15,232 +24,299 @@ $args = array(
 	'post_type'        => 'business'
 );
 $business = get_posts( $args ); 
-$business_pack = get_field("business_pack", $business[0]->ID);
-?>
-<div class="container  primary-pyment">
 
+$messages_have = get_post_meta($business[0]->ID, 'messages_have', true);
+$business_pack = get_field("business_pack", $business[0]->ID);
+
+if(have_posts()){
+	the_post();
+}
+$id = get_the_id();
+
+?>
+	<div class="container  primary-pyment">
+            
 		<div id="primary-pyment" class="content-area">
 			<main id="main">
 				<div class="static-text">
-				<p>Become a <span>Premium User</span> and enjoy all of the <span>MyCityCard</span> system benefits for your business.</p>
-				<p>You are currently a: Basic User.</p>
-				<p>Payment amount: 30 NIS + vat per month ()</p>
-				<p>Next Payment date: DD.MM.YYYY ()</p>
-				<p>Upgrade to Premium Package and enjoy all system benefits:</p>
-				<ul>
-					<li>Visible in 3 sub-categories</li>
-					<li>Publishing additional 10 benefits.</li>
-					<li>1000 benefit & coupons messages every month</li>
-				</ul>
+                                    <?php the_content() ?>
+                                    
+                                    <?php  
+                                    $businessPackHe;
+                                    switch($business_pack){
+                                        case 'Premium': $businessPackHe = 'פרימיום';
+                                            break;
+                                        case 'Basic': $businessPackHe = 'בסיסית';
+                                            break;
+                                        default:
+                                            $businessPackHe = 'חינמית';
+                                            break;
+                                    }
+                                    ?>
+                                    <p>חבילה נוכחית: <span class="orange"><?php echo $businessPackHe ?></span></p>
+<?php 
+$tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
+if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
+?>
+                                        
+                                        <?php 
+                                            $paymentAmount = $tranzillaInfo['paymentAmount'].' ש"ח + מע"מ לחודש';
+                                            if(isset($tranzillaInfo['stopPaying']) && $tranzillaInfo['stopPaying']){
+                                                $paymentAmount = '';
+                                            }
+                                        ?>
+                                        <p>סכום לתשלום: <?php echo $paymentAmount ?> </p>
+                                        <?php 
+                                        $cardNumber = $tranzillaInfo['cardNumber'];
+                                        if(empty($cardNumber)&&!empty($tranzillaInfo['token'])){
+                                            $cardNumber = substr($tranzillaInfo['token'], -4);
+                                        }
+                                        if(!empty($cardNumber)): ?>
+                                        <p>מספר כרטיס: <span class="orange">xxxx-xxxx-xxxx-<?php echo $cardNumber ?></span></p>
+                                        <?php endif; ?>
+                                        <?php if($tranzillaInfo['expmonth']&&$tranzillaInfo['expyear']): ?>
+                                        <p>תוקף כרטיס: <span class="orange"><?php echo $tranzillaInfo['expmonth'] ?>/<?php echo $tranzillaInfo['expyear'] ?></span></p>
+                                        <?php endif; ?>
+                                        <?php 
+                                            $nextPaymentDate = date('d.m.Y' ,$tranzillaInfo['nextPaymentDate']);
+                                            if(isset($tranzillaInfo['stopPaying']) && $tranzillaInfo['stopPaying']){
+                                                
+                                                $nextPaymentDate = '';
+                                            }
+                                            if($tranzillaInfo['business_pack']=== 'premium_year'){
+                                                $nextPaymentDate = date('d.m.Y' ,$tranzillaInfo['paymentYear']);
+                                            }
+                                        ?>
+                                        <p>חיוב הבא בתאריך: <span class="orange"><span class="next-payment-date"><?php echo $nextPaymentDate ?></span></span></p>
+<?php endif; ?>
+                                        <?php if($business_pack != 'Premium'): ?>
+                                        <p>שדרג לחבילת פרמיון ותהנה מכל הטבות המערכת:</p>
+<ul>
+	<li>הופעה ב3 תת קטגוריות</li>
+	<li>פרסום 10 מבצעים והטבות נוספות</li>
+	<li>שליחת 1000 הודעות מבצע וקופונים בחודש</li>
+</ul>
+                                        <?php 
+                                        endif; 
+                                        if(!empty($tranzillaInfo)&&!empty($tranzillaInfo["token"])): ?>
+                                        <p><a class='stop-paying' href="#" data-currentPack="<?php echo $business_pack ?>">הסרת כרטיס אשראי</a></p>
+                                                <?php endif; ?>
 				</div>
 				<div class="sentence">
 					<div class="free-sentence">
 						<div class="header-sentence-item">
-							<p>free</p>
+							<p>חינמית</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
-							<ul>
-							<li>logo</li>
-								<li>Short description</li>
-								<li>Extended description</li>
-								<li>Changing main benefit once a month</li>
-								<li>One photo</li>
-								<li>One subcategory visibility</li>
-								<li class="not-active-sentence"><span></span> No advertisements</li>
-								<li class="not-active-sentence"><span></span> Homepage link</li>
-								<li class="not-active-sentence"><span></span> Facebook link</li>
-								<li class="not-active-sentence"><span></span> 1,000 benefit & coupons messages every mounth</li>
-								<li class="not-active-sentence"><span></span> Publish 10 additional benefits</li>
-								<li  class="price-sentence">FREE</li>
-								</ul>
-								<ul class="body-sentence-item-ul">
-									<li> 
-										<div class="checkbox-sentence">
-										<input type="checkbox"/>
-										</div> 
-										By ordering this package I hereby approve the terms and conditions
-									</li>
-								</ul>
+							<?php the_field('column_1') ?>
 						</div>
+						<?php
+                                                        $className = "";
+							if($business_pack == 'Free'||$tranzillaInfo['stopPaying'] === true){
+								$buttonText = 'CURRENT';
+                                                                $className = '';
+							}else{
+								$buttonText = 'שנמוך';
+                                                                $className = 'stop-paying';
+							}
+						?>
 						<div class="footer-sentence-item">
-							<a href="" id="free" class="pay-button">DOWNGRADE</a>
+
+							<a href="javascript:void(0)" id="free" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
 						</div>
 					</div>
 					<div class="premium-sentence">
 						<div class="header-sentence-item">
-							<p>premium</p>
+							<p>פרימיום</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
-							<ul>	
-								<li>logo</li>
-								<li>Short description</li>
-								<li>Extended description</li>
-								<li>Changing main benefit anytime</li>
-								<li>5 dynamic photos </li>
-								<li>3 subcategories visibility </li>
-								<li>No advertisements</li>
-								<li>Homepage link</li>
-								<li>Facebook link</li>
-								<li class="active-sentence"> 1,000 benefit & coupons messages every mounth</li>
-								<li class="active-sentence"> Publish 10 additional benefits</li>
-								<li  class="price-sentence">50 <span>NIS + VAT per month</span></li>
-								</ul>
-								<ul class="body-sentence-item-ul">
-									<li>
-										<div class="checkbox-sentence">
-										<input type="checkbox"/>
-										</div>
-										Pay one year in advance and get:
-										<ul>
-											<li><span class="plus-item">+</span> extra month free!</li>
-											<li><span class="plus-item">+</span> extra 500 massages each month</li>
-										</ul>			
-									</li>
-									<li> 
-										<div class="checkbox-sentence">
-										<input type="checkbox"/>
-										</div> 
-										By ordering this package I hereby approve the terms and conditions
-									</li>
-								</ul>
+							<?php the_field('column_2') ?>
 						</div>
 						<div class="footer-sentence-item">
-							
-							<a href="" id="basic" class="pay-button">STOP PAYING</a>
+							<?php
+                                                                $className = "";
+								if($business_pack == 'Premium'&&$tranzillaInfo['stopPaying'] !== true&&$tranzillaInfo['downgrade'] !== 'basic'){
+									$buttonText = 'הפסק תשלום';
+                                                                        $className = 'stop-paying';
+                                                                        
+								}else{
+                                                                    $className = "upgrade";
+									$buttonText = 'שדרוג';
+								}
+                                                                $premiumPrice = '50';
+                                                                $val = get_option('premium_price');
+                                                                if($val){
+                                                                   $premiumPrice = $val['input']; 
+                                                                }
+                                                                $priceForYear = '570';
+                                                                $val = get_option('pay_for_year_price');
+                                                                if($val){
+                                                                    $priceForYear = $val['input'];
+                                                                }
+                                                                $basicPremium = '20';
+                                                                $val = get_option('basic_to_premium');
+                                                                if($val){
+                                                                    $basicPremium = $val['input'];
+                                                                }
+                                                                $basicPremiumYear='570';
+                                                                        $val = get_option('basic_to_premium_year');
+                                                                        if($val){
+                                                                            $basicPremiumYear = $val['input'];
+                                                                        }
+                                                                
+							?>
+							<a data-currentPack="<?php echo $business_pack ?>" data-price="<?php echo $premiumPrice ?>" data-foryear="<?php echo $priceForYear ?>" href="javascript:void(0)" id="basic" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
+                                                        <input id="basic-premium" type="hidden" value="<?php echo $basicPremium ?>" />
+                                                        <input id="basic-premium-year" type="hidden" value="<?php echo $basicPremiumYear ?>" />
 						</div>
 					</div>
 					<div class="basic-sentence">
 						<div class="header-sentence-item">
-							<p>basic</p>
+							<p>בסיסית</p>
 							<p></p>
 						</div>
 						<div class="body-sentence-item">
-							<ul>	
-								<li>logo</li>
-								<li>Short description</li>
-								<li>Extended description</li>
-								<li>Changing main benefit anytime</li>
-								<li>5 dynamic photos </li>
-								<li>3 subcategories visibility </li>
-								<li>No advertisements</li>
-								<li>Homepage link</li>
-								<li>Facebook link</li>
-								<li class="not-active-sentence"><span></span> 1,000 benefit & coupons messages every mounth</li>
-								<li class="not-active-sentence"><span></span> Publish 10 additional benefits</li>
-								<li  class="price-sentence">30<span>NIS + VAT per month</span></li>
-								</ul>
-								<ul class="body-sentence-item-ul">
-								
-									<li> 
-										<div class="checkbox-sentence">
-										<input type="checkbox"/>
-										</div> 
-										By ordering this package I hereby approve the terms and conditions
-									</li>
-								</ul>
+							<?php the_field('column_3') ?>
 						</div>
 						<div class="footer-sentence-item">
-							<a href="" id="premium" class="pay-button">DOWNGRADE</a>
+							<?php
+                                                                $className = "";
+								if(($business_pack == 'Basic'||$tranzillaInfo['downgrade'] == 'basic')&&$tranzillaInfo['stopPaying'] !== true){
+									$buttonText = 'הפסק תשלום';
+                                                                        $className = 'stop-paying';
+								}elseif($business_pack == 'Premium'&&$tranzillaInfo['stopPaying'] !== true){
+									$buttonText = 'שנמוך';
+                                                                        $className = 'downgrade';
+								}else{
+                                                                    $className = "upgrade";
+									$buttonText = 'שדרוג';
+								}
+                                                            $basicPrice = '30';
+                                                            $val = get_option('basic_price');
+                                                            if($val){
+                                                                $basicPrice = $val['input'];
+                                                            }
+							?>
+							<a href="javascript:void(0)" id="basic" data-price="<?php echo $basicPrice ?>" class="pay-button <?php echo $className ?>" data-currentPack="<?php echo $business_pack ?>"><?php echo $buttonText ?></a>
 						</div>
 					</div>
 					</div>
 					<div class="static-text-middle">
-						<p>Increase customers in your business – publish easily and simply benefits, special deals and coupons, and make your city neighbors to loyal customers who prefer you over others.</p>
-						<ul>
-							<li>The package you order will be renewed automatically in the end of each period. You can cancel it anytime, with a button click.</li>
-							<li>Prices does not include VAT. VAT tax will be included to each charge by the law.</li>
-						</ul>
+						<?php the_field('bottom_text') ?>
 					</div>
 				</div>
 
 				<div class="bottom-content-payment">
-					<p>Send lots of messages? Buy additional <span>massages package</span>:</p>
-					<table class="table-pyment">
-						<tr class="messages-table">
-						    <td>1.000 messages</td>
-						    <td>2,000 messages</td>
-						 	<td>5,000 messages</td>
-						 	<td>10,000 messages</td>
-						</tr>
-						 <tr class="price-table">
-						    <td><span>20</span> NIS 0.02 NIS per message</td>
-						    <td><span>30</span> NIS 0.015 NIS per message</td>
-						    <td><span>60</span> NIS 0.012 NIS per message </td>
-						    <td><span>100</span> NIS 0.01 NIS per message</td>
-						</tr>
-						<tr class="chek-box-table">
-							<td>
-								<div class="checkbox-sentence">
-								<input type="checkbox"/>
-								</div> 
-								By ordering this package I hereby approve the terms and conditions
-							</td>
-						    <td>
-								<div class="checkbox-sentence">
-								<input type="checkbox"/>
-								</div> 
-								By ordering this package I hereby approve the terms and conditions
-							</td>
-							<td>
-								<div class="checkbox-sentence">
-								<input type="checkbox"/>
-								</div> 
-								By ordering this package I hereby approve the terms and conditions
-							</td>
-							<td>
-								<div class="checkbox-sentence">
-								<input type="checkbox"/>
-								</div> 
-								By ordering this package I hereby approve the terms and conditions
-							</td>
-						    
-						</tr>
-						<tr class="by-package">
-						    <td><a href="#" class="btn-by-package">Buy package</a></td>
-						    <td><a href="#" class="btn-by-package">Buy package</a></td>
-						    <td><a href="#" class="btn-by-package">Buy package</a></td>
-						    <td><a href="#" class="btn-by-package">Buy package</a></td>
-						</tr>
-					</table>
+					<?php
+                                        
+						if($business_pack == 'Premium') {
+                                                    ?>
+                                    <p>ברשותך: <span><?php echo $messages_have ?> הודעות</span></p>
+                                                    <?php
+                                                    
+							the_field('bottom_table');
+						}
+					?>
+
 				</div>
-				
 			</main> <!-- #main
 		</div> --><!-- #primary-->
-		<div class="custom-popup" style="display:none">
+<?php
+$val = get_option('basic_price');
+$sum = '50';
+if($val){
+    $sum = $val['input'];
+}
+
+$lang = 'he';
+if('he' ===  $sitepress->get_current_language()){
+   $lang = 'il'; 
+   $buttonLabel = 'בצע תשלום';
+}else{
+    $lang = 'us';
+    $buttonLabel = 'Pay now';
+}
+$trBgColor = "ffffff";
+$trTextColor = "525252";
+$trButtonColor = "F56C6A";
+$val = get_option('tranzilla_terminal_name');
+if($val):
+$terminal_name = $val['input'];
+$cred_type = 1;
+$currency = 1;
+$logo = 1;
+$tranmode = 'AK';
+
+?>
+		<div class="popup custom-popup" style="display:none">
+                    <span class="popup-close">X</span>
+                    <div class="popup-content">
+                        <iframe
+                            width="455px"
+                            height="500px;" 
+                            src="https://direct.tranzila.com/<?php echo $terminal_name ?>/iframe.php?
+                             &sum=<?php echo $sum ?>
+                             &currency=<?php echo $currency ?>
+                             &cred_type=<?php echo $cred_type; ?>
+                             &MCCUserID=<?php echo $current_user->ID ?>
+                             &lang=<?php echo $lang;?>
+                             &nologo=<?php echo $logo; ?>
+                             &trBgColor=<?php echo $trBgColor; ?>
+                             &trTextColor=<?php echo $trTextColor; ?>
+                             &trButtonColor=<?php echo $trButtonColor; ?>
+                             &buttonLabel=<?php echo $buttonLabel; ?>
+                             &tranmode=<?php echo $tranmode; ?>
+                             &product=package
+                             &email=<?php echo $current_user->user_email ?>
+                             &contact=<?php echo $current_user->display_name ?>
+                           "
+                            frameborder="0"
+                            >
+                         </iframe>
+                    </div>
+		</div>
+                        
+                <?php 
+                    $tranzillaInfo = get_user_meta($current_user->ID, 'tranzillaInfo', true);
+                    $tranzillaInfo = unserialize($tranzillaInfo);
+                    if(!empty($tranzillaInfo)):
+                        $tranilaPW = 'wiBVEw';
+                        if($tranilaPW):
+                            $terminal_name = 'ttxmycitytok';
+                            //$tranilaPW = $tranilaPW['token'];
+                            $token = $tranzillaInfo['token'];
+                            $expdate = $tranzillaInfo['expmonth'].$tranzillaInfo['expyear'];
+                            $sum = 20;
+                            $currency = $tranzillaInfo['currency'];
+                            $cred_type = 1;
+                            
+                            
+                ?>
+                <?php 
+                    if(isset($tranzillaInfo['token'])&&!empty($tranzillaInfo['token'])):
+                ?>
+		<div class="popup message-popup" style="display:none">
 			<span class="popup-close">X</span>
+                       
 			<div class="popup-content">
-				
-				<form action="https://direct.tranzila.com/ttxmycitytok/" method="post">
-					<input type="hidden"  name="supplier"  value="ttxmycitytok" >
-					<input type="hidden"  name="sum"  value="12" >
-					<input type="hidden"  name="cred_type"  value="1">
-					<input type="hidden"  name="currency"  value="1">
-					
-					<div class="card-info">
-						<h4>Payment info</h4>
-						<input type="text" name="ccno"	value="" placeholder="Card number" />
-						<input type="text" name="expmonth"	value="" placeholder="MM" maxlength="2"/>
-						<input type="text" name="expyear"	value="" placeholder="YY" maxlength="2"/>
-						<input type="text" name="expdate"	value="" placeholder="MMYY" maxlength="4"/>
-						<input type="text" name="mycvv"	value="" placeholder="CVV" maxlength="4"/>
-						<input type="text" name="myid"	value="" placeholder="ID" maxlength="9"/>
-					</div>
-					<div class="customer-info">
-						<h4>Customer info</h4>
-						<input type="text" name="company" placeholder="Company"/>
-						<input type="text" name="contact" placeholder="Contact Name"/>
-						<input type="text" name="email" placeholder="email"/>
-						<input type="text" name="address" placeholder="address"/>
-						<input type="text" name="phone" placeholder="phone"/>
-						<input type="text" name="city" placeholder="city"/>
-						<input type="text" name="pdesc" placeholder="desc"/>
-						<input type="text" name="remarks" placeholder="remarks"/>
-					</div>
-					<input type="submit" value="Send" class="send-btn">
-				</form>
+                            <h3>You want to buy <span class="number"></span>messages</h3>
+                            <form action="<?php echo home_url('/payment-process/') ?>" method="post">
+                                <input class="sum" type="hidden" name="messages" value="">
+                                <button class="btn btn-info">Pay</button>
+                            </form>
 			</div>
 		</div>
+                <?php endif; endif; endif; ?>
+<?php endif; ?>
 	</div>
-<?php get_footer(); ?>
+        <script>
+            jQuery(function(){
+                var package = '<?php echo $business_pack ?>'.toLowerCase();
+                $('.'+package+'-sentence').find('.body-sentence-item-ul').remove();
+            });
+        </script>
+<?php 
+
+get_footer(); ?>

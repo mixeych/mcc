@@ -26,6 +26,7 @@ get_header(); ?>
 			if($catP != 0){
 				$categoryPromo = $catP;
 			}
+            $categoryPromo = icl_object_id($categoryPromo, 'business_cat', false, 'en');
             $query = "SELECT business_id FROM $wpdb->promotions WHERE promo_city = '$city' AND promo_area='$categoryPromo'";
             $res = $wpdb->get_results($query);
 

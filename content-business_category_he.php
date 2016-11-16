@@ -27,14 +27,17 @@ if($likes_field) {
 
 if ( !is_user_logged_in() )
 	$perm_likes_class = "like_disable";
+$link = get_permalink();
+$link = str_replace('/business/', '/he/business/', $link);
+                
 ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<a href="<?=get_permalink();?>" class="business_logo">
+	<a href="<?=$link;?>" class="business_logo">
 		<img src="<?=$logo["sizes"]["thumbnail"];?>" alt="" />
 	</a>
 	<div class="business_content">
 		<div class="business_header">
-			<?php the_title( sprintf( '<h1><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h1>' ); ?>
+			<?php the_title( sprintf( '<h1><a href="%s" rel="bookmark">', esc_url( $link ) ), '</a></h1>' ); ?>
 			<div class="business_header_likes <?=$perm_likes_class?>" rel="<?php the_ID();?>"><?=$like_row;?></div>
 		</div>
 		<div class="business_desc"><?=get_field("field_554775a23e29e", get_the_ID());?></div>
@@ -44,6 +47,6 @@ if ( !is_user_logged_in() )
 				<span><?=the_sub_field('benefit_description');?></span>
 			</div>
 		<? endif; ?>
-		<a href="<?=get_permalink();?>" class="business_link">צפה בכל ההטבות של העסק</a>
+		<a href="<?=$link;?>" class="business_link">צפה בכל ההטבות של העסק</a>
 	</div>
 </article><!-- #post-## -->

@@ -1348,7 +1348,7 @@ height:82px;
 
 
 .categories-container, .category-container{
-float:left;
+float:left!important;
 	display: block;
 	width: 100%;
 }
@@ -1364,8 +1364,8 @@ height:60px;
 
 .category-title{
 display:inline-block;
-float:right;
-width:69%;
+float:right!important;
+width:80%!important;
 max-width:463px;
 font-size: 1.375em;
 }
@@ -1482,12 +1482,12 @@ background-image:url('images/google-ad-160x600.png');
 }
 
 
-.business_page_benefit::after {
+.business_page_benefit.main::after {
 	content: "";
 	position: absolute;
 	top: 0;
 	right: 0;
-	background: url("images/benefit_chup_he.png") no-repeat;
+	background: url("images/benefit_chup_he.png") no-repeat!important;
 	width: 54px;
 	height: 56px;
 }
@@ -1510,7 +1510,7 @@ top: 17px!important;
 float: right}
 
 #manage_business_links h2, #add_cover_photo h2.add-photo-title {
-	background: url("images/premium_label_icon.png") no-repeat right center;
+	background: url("images/premium_label_icon.png") no-repeat right center!important;
 	padding-right: 21px;
 	padding-left: 0;
 }
@@ -1581,7 +1581,7 @@ float: left
 	padding-right: 1%;
 }
 .add_cover_photo_button {
-	background: url("images/premium_white_icon.png") no-repeat 10px #bcb4a9;;
+	background: url("images/premium_white_icon.png") no-repeat 10px #bcb4a9!important;
 	padding: 6px 35px 6px 10px;
 	float: left;
 	background-position: 95% 50%;

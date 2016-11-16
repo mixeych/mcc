@@ -7,7 +7,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     check_user_auth();
 }
 if(is_user_logged_in()&&isset($current_user->caps['subscriber'])){
-	wp_redirect(home_url());
+    wp_redirect(home_url());
 }
 $sessStatus = session_status();
 if($sessStatus == 'PHP_SESSION_DISABLED'||$sessStatus===0 ){
@@ -50,7 +50,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 ?>
                                         
                                         <?php 
-                                            $paymentAmount = $tranzillaInfo['paymentAmount'].' NIS + vat per month ()';
+                                            $paymentAmount = $tranzillaInfo['paymentAmount'].' NIS + vat per month';
                                             if(isset($tranzillaInfo['stopPaying']) && $tranzillaInfo['stopPaying']){
                                                 $paymentAmount = '';
                                             }
@@ -89,7 +89,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
                                         <?php 
                                         endif; 
                                         if(!empty($tranzillaInfo)&&!empty($tranzillaInfo["token"])): ?>
-                                        <p><a id="change-credit-card" href="#">Change card</a> | <a class='stop-paying' href="#" data-currentPack="<?php echo $business_pack ?>">Remove card</a></p>
+                                        <p><a class='stop-paying' href="#" data-currentPack="<?php echo $business_pack ?>">Remove card</a></p>
                                                 <?php endif; ?>
 				</div>
 				<div class="sentence">
@@ -294,19 +294,24 @@ $tranmode = 'AK';
                             <h3>You want to buy <span class="number"></span>messages</h3>
                             <form action="<?php echo home_url('/payment-process/') ?>" method="post">
                                 <input class="sum" type="hidden" name="messages" value="">
-                                <button class="btn btn-info">Pay</button>
+                                <button class="btn btn-info buy-messages">Pay</button>
                             </form>
 			</div>
 		</div>
                 <?php endif; endif; endif; ?>
 <?php endif; ?>
 	</div>
+        <?php if($tranzillaInfo['stopPaying'] !== true): ?>
+        <?php 
+            $bizPack = $tranzillaInfo['downgrade']?$tranzillaInfo['downgrade']:$business_pack
+        ?>
         <script>
             jQuery(function(){
-                var package = '<?php echo $business_pack ?>'.toLowerCase();
+                var package = '<?php echo $bizPack ?>'.toLowerCase();
                 $('.'+package+'-sentence').find('.body-sentence-item-ul').remove();
             });
         </script>
+        <?php endif; ?>
 <?php 
 
 get_footer(); ?>

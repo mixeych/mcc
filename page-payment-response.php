@@ -68,7 +68,7 @@ if ($response !== '000') {
             if($val){
                 $premium_price = $val['input'];
             }
-            $pay_for_year_price = '50';
+            $pay_for_year_price = '600';
             $val = get_option('pay_for_year_price');
             if($val){
                 $pay_for_year_price = $val['input'];
@@ -78,7 +78,7 @@ if ($response !== '000') {
             if($val){
                 $basic_to_premium = $val['input'];
             }
-            $basic_to_premium_year = '20';
+            $basic_to_premium_year = '570';
             $val = get_option('basic_to_premium_year');
             if($val){
                 $basic_to_premium_year = $val['input'];
@@ -107,7 +107,7 @@ if ($response !== '000') {
                     $currentPack = get_field("business_pack", $business->ID);
                     if($currentPack == 'Basic'){
                         update_field("business_pack", "Premium", $business->ID);
-                        $paymentAmount = $_POST['sum'];;
+                        $paymentAmount = $premium_price;
                         update_post_meta($business->ID, 'messages_have', 1000);
                         $business_back = "premium_month";
                         $paymentYear = '';
@@ -117,7 +117,7 @@ if ($response !== '000') {
                     $currentPack = get_field("business_pack", $business->ID);
                     if($currentPack == 'Basic'){
                         update_field("business_pack", "Premium", $business->ID);
-                        $paymentAmount = $_POST['sum'];
+                        $paymentAmount = $pay_for_year_price;
                         update_post_meta($business->ID, 'messages_have', 1500);
                         $business_back = "premium_year";
                         $paymentYear = $paymentDate+34128000;
@@ -197,9 +197,9 @@ if ($response !== '000') {
             }
             ?>
             <script>
-                setTimeout(function(){
-                    window.location = '<?php echo home_url('payment') ?>';
-                }, 1000);
+//                setTimeout(function(){
+//                    window.location = '<?php echo home_url('payment') ?>';
+//                }, 1000);
             </script>
             <?php
         }
