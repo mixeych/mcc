@@ -99,7 +99,7 @@ jQuery(document).ready(function($) {
                     price = $("#basic-premium-year").val();
                 }else if(payForYear&&$(this).parents(".premium-sentence").length&&currentPack !== 'Basic'){
                     console.log(2);
-                    price = $(this).attr("#data-foryear");
+                    price = $(this).attr("data-foryear");
                 }else if(currentPack==='Basic'&&!payForYear){
                     price = $("#basic-premium").val();
                     console.log(3);
@@ -168,6 +168,29 @@ jQuery(document).ready(function($) {
                 success: function(res){
                     if(res.success){
                         alert("downgraded");
+                        window.location.reload();
+                    }
+                }
+            });
+        });
+        
+        $('.pay-button.back-to-premium, .pay-button.back-to-basic').on('click', function(){
+            var pack = $(this).attr("data-currentpack");
+            var res = confirm("Back to "+pack+"?");
+            
+            if(!res){
+                return false;
+            }
+            $.ajax({
+                url: ajaxurl+"?action=backToPack",
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    pack: pack
+                },
+                success: function(res){
+                    if(res.success){
+                        alert("Your package is "+pack);
                         window.location.reload();
                     }
                 }

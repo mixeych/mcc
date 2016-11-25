@@ -47,6 +47,9 @@ $id = get_the_id();
 <?php 
 $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
 if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
+    echo "<pre>";
+var_dump($tranzillaInfo);
+echo "</pre>";
 ?>
                                         
                                         <?php 
@@ -133,6 +136,9 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
                                                                         
 								}else{
                                                                     $className = "upgrade";
+                                                                    if($business_pack == 'Premium'){
+                                                                        $className = 'back-to-premium';
+                                                                    }
 									$buttonText = 'UPGRADE';
 								}
                                                                 $premiumPrice = '50';
@@ -157,7 +163,7 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
                                                                         }
                                                                 
 							?>
-							<a data-currentPack="<?php echo $business_pack ?>" data-price="<?php echo $premiumPrice ?>" data-foryear="<?php echo $priceForYear ?>" href="javascript:void(0)" id="basic" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
+							<a data-currentPack="<?php echo $business_pack ?>" data-price="<?php echo $premiumPrice ?>" data-foryear="<?php echo $priceForYear ?>" href="javascript:void(0)" id="premium" class="pay-button <?php echo $className ?>"><?php echo $buttonText ?></a>
                                                         <input id="basic-premium" type="hidden" value="<?php echo $basicPremium ?>" />
                                                         <input id="basic-premium-year" type="hidden" value="<?php echo $basicPremiumYear ?>" />
 						</div>
@@ -182,6 +188,9 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 								}else{
                                                                     $className = "upgrade";
 									$buttonText = 'UPGRADE';
+                                                                    if($business_pack == 'Basic'){
+                                                                        $className = 'back-to-basic';
+                                                                    }
 								}
                                                             $basicPrice = '30';
                                                             $val = get_option('basic_price');

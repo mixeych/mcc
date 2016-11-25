@@ -4361,6 +4361,7 @@ function edit_main_benefit(){
 
 
 	if($business) {
+                $business_pack = get_field("business_pack", $business->ID);
 		$time = time();
 		update_post_meta($business->ID, 'benefit_created_at', $time);
 		if(have_rows('benefits', $business->ID)){
@@ -4374,6 +4375,10 @@ function edit_main_benefit(){
 							update_sub_field("benefit_image", $image_id);
 						}
 					}
+                                        if($business_pack == 'Free'){
+                                            update_sub_field('benefit_expiration', date("d/m/Y", strtotime("+30 days")));
+                             
+                                        }
 					break;
 				}
 			}
@@ -4549,6 +4554,43 @@ function checkPackageExpiration(){
     return;
 }
 
+add_action('wp_ajax_backToPack', 'backToPack');
+
+function backToPack(){
+    global $current_user;
+    $pack = $_POST['pack'];
+    $tranzillaInfo = unserialize(get_user_meta($current_user->ID, 'tranzillaInfo', true));
+    if(empty($tranzillaInfo)){
+        echo json_encode(array('success' => false));
+        die();
+    }
+    
+    switch($pack){
+        case 'Premium':
+            $tranzillaInfo['stopPaying'] = false;
+            $tranzillaInfo['downgrade'] = false;
+            $val = get_option('premium_price');
+            $premiumPrice = '50';
+            if($val){
+               $premiumPrice = $val['input']; 
+            }
+            $tranzillaInfo['paymentAmount'] = $premiumPrice;
+            $ser = serialize($tranzillaInfo);
+            update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
+            echo json_encode(array('success' => true));
+            die();
+            break;
+        case 'Basic':
+            $tranzillaInfo['stopPaying'] = false;
+            $ser = serialize($tranzillaInfo);
+            update_user_meta($current_user->ID, 'tranzillaInfo', $ser);
+            echo json_encode(array('success' => true));
+            die();
+            break;
+    }
+    
+}
+
 add_action('sendRecurringPayment', 'checkPaymentDate', 10, 1);
 function checkPaymentDate($userId){
     if(!$userId){
@@ -4707,7 +4749,12 @@ function MCCTranzillaDowngrade(){
         die();
     }
     $tranzillaInfo['downgrade'] = 'basic';
-    $tranzillaInfo['paymentAmount'] = '30';
+    $basicPrice = '30';
+    $val = get_option('basic_price');
+    if($val){
+        $basicPrice = $val['input'];
+    }
+    $tranzillaInfo['paymentAmount'] = $basicPrice;
     $tranzillaInfo['business_pack'] = 'Basic';
     $ser = serialize($tranzillaInfo);
     $res = update_user_meta($current_user->ID, 'tranzillaInfo', $ser);

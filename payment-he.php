@@ -143,6 +143,9 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
                                                                         
 								}else{
                                                                     $className = "upgrade";
+                                                                    if($business_pack == 'Premium'){
+                                                                        $className = 'back-to-premium';
+                                                                    }
 									$buttonText = 'שדרוג';
 								}
                                                                 $premiumPrice = '50';
@@ -192,6 +195,9 @@ if(!empty($tranzillaInfo)&&is_array($tranzillaInfo)):
 								}else{
                                                                     $className = "upgrade";
 									$buttonText = 'שדרוג';
+                                                                        if($business_pack == 'Basic'){
+                                                                        $className = 'back-to-basic';
+                                                                    }
 								}
                                                             $basicPrice = '30';
                                                             $val = get_option('basic_price');
